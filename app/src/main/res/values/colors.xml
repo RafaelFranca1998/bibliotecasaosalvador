@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <color name="Violeta">#3F51B5</color>
+    <color name="Azul">#303F9F</color>
+    <color name="Rosinha">#FF4081</color>
+    <color name="Roxo">#a22be2</color>
+    <color name="Preto">#000000</color>
+    <color name="Branco">#ffffff</color>
+    <color name="Cinza">#dedcdc</color>
+    <color name="Verde">#96ac25</color>
+    <color name="VerdeEscuro">#6f8019</color>
+    <color name="AzulMarinho">#1d88b6</color>
+</resources>
