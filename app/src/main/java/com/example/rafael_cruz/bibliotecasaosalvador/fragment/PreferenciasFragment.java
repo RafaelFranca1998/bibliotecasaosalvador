@@ -1,10 +1,12 @@
-package com.example.rafael_cruz.bibliotecasaosalvador;
+package com.example.rafael_cruz.bibliotecasaosalvador.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.rafael_cruz.bibliotecasaosalvador.R;
 
 public class PreferenciasFragment extends Fragment {
 

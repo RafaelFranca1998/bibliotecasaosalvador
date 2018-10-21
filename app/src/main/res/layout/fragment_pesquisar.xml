@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.rafael_cruz.bibliotecasaosalvador.PesquisarFragment">
+    tools:context="com.example.rafael_cruz.bibliotecasaosalvador.fragment.PesquisarFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

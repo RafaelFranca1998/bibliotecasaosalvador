@@ -45,7 +45,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
         private final TextView categoria;
-        private final ImageView img;
+        //private final ImageView img;
 
         public ViewHolder(View v) {
             super(v);
@@ -58,7 +58,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomHolder> {
             });
             textView    = v.findViewById(R.id.text_livro_cardview);
             categoria   = v.findViewById(R.id.text_categoria_cardview);
-            img         = v.findViewById(R.id.imagem_livro);
+            //img         = v.findViewById(R.id.imagem_livro);
         }
 
         public TextView getTextView() {
@@ -69,9 +69,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomHolder> {
             return categoria;
         }
 
-        public ImageView getImg() {
-            return img;
-        }
+//        public ImageView getImg() {
+//            return img;
+//        }
     }
     // END_INCLUDE(recyclerViewSampleViewHolder)
 

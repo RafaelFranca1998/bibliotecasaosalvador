@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.rafael_cruz.bibliotecasaosalvador.MainFragment">
+    tools:context="com.example.rafael_cruz.bibliotecasaosalvador.fragment.MainFragment">
 
     <!-- TODO: Update blank fragment layout -->
 

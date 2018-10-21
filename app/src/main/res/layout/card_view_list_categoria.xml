@@ -14,11 +14,17 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/image_categoria"
-                android:layout_width="90dp"
-                android:layout_height="120dp"
-                app:srcCompat="@drawable/common_google_signin_btn_icon_dark_normal_background" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal">
+
+                <ImageView
+                    android:id="@+id/image_categoria"
+                    android:layout_width="90dp"
+                    android:layout_height="120dp"
+                    app:srcCompat="@drawable/common_google_signin_btn_icon_dark_normal_background" />
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/text_categoria_categoria"

@@ -1,4 +1,4 @@
-package com.example.rafael_cruz.bibliotecasaosalvador;
+package com.example.rafael_cruz.bibliotecasaosalvador.activity;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -19,6 +19,9 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.example.rafael_cruz.bibliotecasaosalvador.AppCompatPreferenceActivity;
+import com.example.rafael_cruz.bibliotecasaosalvador.R;
+
 import java.util.List;
 
 /**
@@ -32,7 +35,7 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity{
+public class SettingsActivity extends AppCompatPreferenceActivity {
 
     /**
      * A preference value change listener that updates the preference's summary

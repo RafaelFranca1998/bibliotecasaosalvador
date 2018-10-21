@@ -113,4 +113,5 @@
     <string name="icone">icone_list</string>
     <string name="descricao">Livro: </string>
     <string name="categoria">Categoria: </string>
+    <string name="imagem_do_livro">Imagem do livro</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.rafael_cruz.bibliotecasaosalvador;
+package com.example.rafael_cruz.bibliotecasaosalvador.fragment;
 
 
 import android.os.Bundle;
@@ -7,10 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FavoritosFragment extends Fragment {
+import com.example.rafael_cruz.bibliotecasaosalvador.R;
 
+public class PesquisarFragment extends Fragment {
 
-    public FavoritosFragment() {
+    public PesquisarFragment() {
         // Required empty public constructor
     }
 
@@ -18,7 +19,6 @@ public class FavoritosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favoritos, container, false);
+        return inflater.inflate(R.layout.fragment_pesquisar, container, false);
     }
-
 }
