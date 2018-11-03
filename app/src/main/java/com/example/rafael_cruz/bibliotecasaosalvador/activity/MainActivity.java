@@ -1,5 +1,7 @@
 package com.example.rafael_cruz.bibliotecasaosalvador.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -7,32 +9,37 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import com.example.rafael_cruz.bibliotecasaosalvador.fragment.AboutFragment;
-import com.example.rafael_cruz.bibliotecasaosalvador.fragment.FavoritosFragment;
-import com.example.rafael_cruz.bibliotecasaosalvador.fragment.MainFragment;
-import com.example.rafael_cruz.bibliotecasaosalvador.fragment.PesquisarFragment;
-import com.example.rafael_cruz.bibliotecasaosalvador.fragment.PreferenciasFragment;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.AdapterRecyclerView;
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
-import com.example.rafael_cruz.bibliotecasaosalvador.fragment.SettingsFragment;
+import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    NavigationView navigationView=  null;
-    Toolbar toolbar =  null;
+    private static int itemPosition;
+    private NavigationView navigationView=  null;
+    private Toolbar toolbar =  null;
+    private static List<Livro> listLivros;
+    @SuppressLint("StaticFieldLeak")
+    private static RecyclerView listView;
+    private AdapterRecyclerView adapterListView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Set the fragment Initially
-        MainFragment fragment= new MainFragment();
-                android.support.v4.app.FragmentTransaction fragmentTransaction =
-                        getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_container, fragment);
-                fragmentTransaction.commit();
+
+        listView =  findViewById(R.id.recycler_view_livros);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,6 +52,14 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toolbar.setTitle("Principal");
+        navigationView.setCheckedItem(R.id.nav_inicio);
     }
 
     @Override
@@ -72,19 +87,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            SettingsFragment fragment = new SettingsFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
-            return true;
-        }else if (id == R.id.action_about){
-            AboutFragment fragment = new AboutFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
+        if (id == R.id.action_about){
+//            AboutFragment fragment = new AboutFragment();
+//            android.support.v4.app.FragmentTransaction fragmentTransaction =
+//                    getSupportFragmentManager().beginTransaction();
+//            fragmentTransaction.replace(R.id.fragment_container, fragment);
+//            fragmentTransaction.commit();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -97,38 +105,57 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_inicio) {
-            MainFragment fragment = new MainFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
+            if (!item.isChecked()){
+                Intent intent =  new Intent(MainActivity.this,MainActivity.class);
+                startActivity(intent);}
         } else if (id == R.id.nav_pesquisar) {
-            PesquisarFragment fragment= new PesquisarFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
+            if (!item.isChecked()){
+                Intent intent =  new Intent(MainActivity.this,PesquisarActivity.class);
+                startActivity(intent);}
         } else if (id == R.id.nav_favoritos) {
-            FavoritosFragment fragment= new FavoritosFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
+            if (!item.isChecked()){
+                Intent intent =  new Intent(MainActivity.this,FavoritosActivity.class);
+                startActivity(intent);}
         }else if (id == R.id.nav_preferencias) {
-            PreferenciasFragment fragment= new PreferenciasFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, fragment);
-            fragmentTransaction.commit();
+            if (!item.isChecked()){
+//            PreferenciasFragment fragment= new PreferenciasFragment();
+//            android.support.v4.app.FragmentTransaction fragmentTransaction =
+//                    getSupportFragmentManager().beginTransaction();
+//            fragmentTransaction.replace(R.id.fragment_container, fragment);
+//            fragmentTransaction.commit();
+            }
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
+        }else if (id == R.id.nav_conta) {
+            if (isConected()){
+                Intent intent =  new Intent(MainActivity.this,ContaActivity.class);
+                startActivity( intent );
+                finish();
+            } else {
+                Intent intent =  new Intent(MainActivity.this,LoginActivity.class);
+                startActivity( intent );
+                finish();
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public static class MyOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            itemPosition = listView.indexOfChild(v);
+        }
+    }
+
+    private boolean isConected(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        return user != null;
+    }
+
 
 }

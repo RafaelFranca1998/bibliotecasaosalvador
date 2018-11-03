@@ -16,24 +16,4 @@
         android:contentDescription="@string/nav_header_desc"
         app:srcCompat="@drawable/logo_biblioteca_edit" />
 
-    <TextView
-        android:layout_width="162dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView"
-        android:layout_alignStart="@+id/imageView"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="@string/nav_header_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/Branco" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/imageView"
-        android:layout_marginBottom="11dp"
-        android:text="@string/nav_header_subtitle"
-        android:textColor="@color/Branco" />
-
 </RelativeLayout>

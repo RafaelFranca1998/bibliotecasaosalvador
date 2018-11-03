@@ -20,20 +20,28 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.DAO;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.ToHashMap;
+import com.example.rafael_cruz.bibliotecasaosalvador.model.Usuario;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -48,13 +56,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
@@ -64,35 +65,39 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private FirebaseAuth auntenticacao;
+    private Usuario usuario;
+    private String identificadorUsuarioLogado;
+    private boolean isSuccessful;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-     //   this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //   this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = findViewById(R.id.email);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
+        mPasswordView = findViewById(R.id.password);
+        mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
+            if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                attemptLogin();
+                return true;
             }
+            return false;
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton.setOnClickListener(view -> attemptLogin());
+
+        Button mRegisterButton =  findViewById(R.id.bt_registrar);
+
+        mRegisterButton.setOnClickListener(v -> {
+            Intent intent =  new Intent(LoginActivity.this,RegistroActivity.class);
+            startActivity(intent);
+            finish();
         });
 
         mLoginFormView = findViewById(R.id.login_form);
@@ -115,14 +120,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return true;
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
+            Snackbar.
+                    make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(android.R.string.ok, v ->
+                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS));
         } else {
             requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
         }
@@ -313,25 +314,50 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                auntenticacao = DAO.getFirebaseAutenticacao();
+                auntenticacao.signInWithEmailAndPassword(
+                        mEmail,
+                        mPassword
+                ).addOnSuccessListener(authResult -> {
+                    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                    identificadorUsuarioLogado = authResult.getUser().getUid();
+                    firestore
+                            .collection("usuarios")
+                            .document(identificadorUsuarioLogado)
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                Usuario usuarioRecuperado =
+                                        ToHashMap.hashMapToUser(Objects.requireNonNull(documentSnapshot.getData()));
+                                Preferencias preferencias
+                                        = new Preferencias(LoginActivity.this);
+                                try {
+                                    preferencias.salvarDados
+                                            (usuarioRecuperado.getNome(),
+                                                    usuarioRecuperado.getSobreNome(),
+                                                    usuarioRecuperado.getEmail(),
+                                                    usuarioRecuperado.getSenha(),
+                                                    usuarioRecuperado.getIdUsuario(),
+                                                    usuarioRecuperado.getLinkImgAccount());
+                                }catch (NullPointerException e){
+                                    Toast.makeText(LoginActivity.this,"Database Error:"+e.getMessage(),Toast.LENGTH_LONG).show();
+                                    Log.e("Database Error: ","Database Error:"+e.getMessage());
+                                }
+                            });
+                }).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_SHORT).show();
+                        abrirTelaPrincipal();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Erro ao fazer login!", Toast.LENGTH_SHORT).show();
+                        showProgress(false);
+                    }
+                    isSuccessful = task.isSuccessful();
+                });
+                return true;
+            }catch (Exception e){
                 return false;
             }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
         }
 
         @Override
@@ -357,6 +383,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void abrirRecuperarSenha(View view){
         Intent intent =  new Intent(LoginActivity.this,RecuperarSenhaActivity.class);
         startActivity(intent);
+    }
+    public void abrirTelaPrincipal(){
+        Intent intent =  new Intent(LoginActivity.this,MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
 

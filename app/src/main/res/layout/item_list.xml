@@ -29,14 +29,14 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/text_livro_padrao"
+            android:id="@+id/text_livro_fav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="15dp"
             android:text="@string/descricao"
             android:textColor="@color/Preto"
-            app:layout_constraintStart_toEndOf="@+id/text_livro_padrao"
+            app:layout_constraintStart_toEndOf="@+id/text_livro_fav"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView

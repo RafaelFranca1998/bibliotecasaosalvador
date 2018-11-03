@@ -1,37 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_inicio"
-            android:icon="@drawable/casa_icon_white"
-            android:title="Inicio" />
+            android:icon="@drawable/ic_home_white_24dp"
+            android:title="@string/inicio" />
         <item
             android:id="@+id/nav_pesquisar"
-            android:icon="@drawable/lupa_icon_white"
-            android:title="Pesquisar" />
+            android:icon="@drawable/ic_search_white_24dp"
+            android:title="@string/pesquisar" />
         <item
             android:id="@+id/nav_favoritos"
-            android:icon="@drawable/estrela_icon_white"
-            android:title="Favoritos" />
+            android:icon="@drawable/ic_star_white_24dp"
+            android:title="@string/favoritos" />
         <item
             android:id="@+id/nav_preferencias"
             android:icon="@drawable/configuracao_icon_white"
-            android:title="Preferências" />
+            android:title="@string/prefer_ncias" />
+        <item
+            android:id="@+id/nav_conta"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="@string/conta" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Compartilhar" />
+                android:title="@string/compartilhar" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Convidar Amigos" />
+                android:title="@string/convidar_amigos" />
         </menu>
     </item>
 
