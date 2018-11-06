@@ -21,14 +21,12 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
@@ -66,9 +64,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private FirebaseAuth auntenticacao;
-    private Usuario usuario;
     private String identificadorUsuarioLogado;
-    private boolean isSuccessful;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -320,8 +316,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         mEmail,
                         mPassword
                 ).addOnSuccessListener(authResult -> {
-                    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                    identificadorUsuarioLogado = authResult.getUser().getUid();
+                    FirebaseFirestore firestore =
+                            FirebaseFirestore.getInstance();
+                    identificadorUsuarioLogado =
+                            authResult.getUser().getUid();
                     firestore
                             .collection("usuarios")
                             .document(identificadorUsuarioLogado)
@@ -352,7 +350,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         Toast.makeText(LoginActivity.this, "Erro ao fazer login!", Toast.LENGTH_SHORT).show();
                         showProgress(false);
                     }
-                    isSuccessful = task.isSuccessful();
                 });
                 return true;
             }catch (Exception e){

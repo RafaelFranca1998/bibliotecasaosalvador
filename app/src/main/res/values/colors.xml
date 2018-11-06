@@ -21,4 +21,7 @@
     <color name="Verde">#96ac25</color>
     <color name="VerdeEscuro">#6f8019</color>
     <color name="AzulMarinho">#1d88b6</color>
+
+    <color name="red">#ff0000</color>
+    <color name="green">#26ff00</color>
 </resources>

@@ -17,12 +17,14 @@
 
     <Button
         android:id="@+id/bt_concluir_regisstro"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="143dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="143dp"
-        android:layout_marginBottom="17dp"
+        android:layout_marginStart="252dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="38dp"
+        android:layout_marginBottom="119dp"
+        android:background="@drawable/round_corner_indice"
         android:text="@string/registrar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +34,7 @@
     <ScrollView
         android:id="@+id/register_form"
         android:layout_width="368dp"
-        android:layout_height="462dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
@@ -45,23 +47,35 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView8"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/registro"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="64dp"
-                android:textAlignment="center"
-                android:textColor="@color/Branco"
-                android:textSize="24sp" />
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="248dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginBottom="24dp"
+                    android:text="@string/registro"
+                    android:textAlignment="center"
+                    android:textColor="@color/Branco"
+                    android:textSize="24sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/nome" />
+                android:text="@string/nome"
+                android:textColor="@color/Branco" />
 
             <EditText
                 android:id="@+id/edit_text_nome"
@@ -79,7 +93,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/sobrenome" />
+                android:text="@string/sobrenome"
+                android:textColor="@color/Branco" />
 
             <EditText
                 android:id="@+id/edit_text_sobrenome"
@@ -97,7 +112,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/email" />
+                android:text="@string/email"
+                android:textColor="@color/Branco" />
 
             <EditText
                 android:id="@+id/edit_text_email"
@@ -115,7 +131,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/senha" />
+                android:text="@string/senha"
+                android:textColor="@color/Branco" />
 
             <EditText
                 android:id="@+id/edit_text_senha"

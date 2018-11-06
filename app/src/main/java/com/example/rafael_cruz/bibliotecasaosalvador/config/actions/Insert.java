@@ -29,6 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
@@ -39,6 +40,7 @@ import com.shockwave.pdfium.PdfiumCore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,6 +82,45 @@ public class Insert {
                     .collection("usuarios")
                     .document(mUsuario.getIdUsuario())
                     .set(newUser).addOnSuccessListener(aVoid -> {
+                        if (listener != null) {
+                            listener.onCompleteInsert(null);
+                        }
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void saveUserFav(String idUsuario, Livro l){
+        firebaseFirestore =  null;
+        Map < String, Object > newFav = new HashMap < > ();
+        newFav.putAll(ToHashMap.livroToHashMap(l));
+        try {
+            firebaseFirestore = FirebaseFirestore.getInstance();
+            firebaseFirestore
+                    .collection("usuarios")
+                    .document(idUsuario)
+                    .collection("favoritos")
+                    .document(l.getIdLivro())
+                    .set(newFav).addOnSuccessListener(aVoid -> {
+                        if (listener != null) {
+                            listener.onCompleteInsert(null);
+                        }
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteUserFav(String idUsuario, Livro l){
+        firebaseFirestore =  null;
+        try {
+            firebaseFirestore = FirebaseFirestore.getInstance();
+            firebaseFirestore
+                    .collection("usuarios")
+                    .document(idUsuario)
+                    .collection("favoritos")
+                    .document(l.getIdLivro()).delete().addOnSuccessListener(aVoid -> {
                         if (listener != null) {
                             listener.onCompleteInsert(null);
                         }

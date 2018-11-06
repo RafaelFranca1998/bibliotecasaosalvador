@@ -55,44 +55,59 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/linearLayout3"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="61dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="8dp"
             android:background="@color/primary_dark"
-            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/linearLayout2"
             app:layout_constraintVertical_bias="1.0">
 
-            <TextView
-                android:id="@+id/text_nome_livro_list"
+            <LinearLayout
+                android:id="@+id/linearLayout9"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_nome_livro_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="16dp"
+                    android:text=""
+                    android:textColor="@android:color/white"
+                    tools:text="@tools:sample/lorem" />
+
+                <TextView
+                    android:id="@+id/text_categoria"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    tools:text="@tools:sample/lorem" />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/checkbox_favorito2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="10dp"
-                android:text=""
-                android:textColor="@android:color/white"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:button="@android:drawable/btn_star"
+                android:checked="false"
+                tools:layout_editor_absoluteX="98dp"
+                tools:layout_editor_absoluteY="212dp" />
 
-            <TextView
-                android:id="@+id/text_categoria"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
-                android:layout_weight="1"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                tools:text="Localidade" />
-        </LinearLayout>
+        </RelativeLayout>
 
     </android.support.constraint.ConstraintLayout>
 

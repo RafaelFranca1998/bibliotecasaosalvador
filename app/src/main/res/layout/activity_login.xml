@@ -127,13 +127,13 @@
 
                 <Button
                     android:id="@+id/email_sign_in_button"
-                    style="?android:textAppearanceSmall"
+                    style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:background="@drawable/round_corner_indice"
                     android:text="Entrar"
-                    android:textColor="@color/Preto"
-                    android:textStyle="bold" />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/textView10"
@@ -147,12 +147,14 @@
 
                 <Button
                     android:id="@+id/bt_registrar"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_marginBottom="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-
+                    android:background="@drawable/round_corner_indice"
                     android:text="Registrar"
-                    android:textColor="@color/Preto" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
         </LinearLayout>

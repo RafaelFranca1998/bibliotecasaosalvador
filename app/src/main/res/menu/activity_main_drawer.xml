@@ -25,6 +25,10 @@
             android:id="@+id/nav_conta"
             android:icon="@drawable/ic_person_black_24dp"
             android:title="@string/conta" />
+        <item
+            android:id="@+id/nav_sobre"
+            android:icon="@drawable/informacao_icon_black"
+            android:title="@string/sobre" />
     </group>
 
     <item android:title="@string/communicate">

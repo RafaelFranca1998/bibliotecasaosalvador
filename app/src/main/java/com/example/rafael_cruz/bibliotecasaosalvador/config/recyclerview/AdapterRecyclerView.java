@@ -6,11 +6,15 @@
 package com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,8 +25,11 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
 import com.example.rafael_cruz.bibliotecasaosalvador.activity.MainActivity;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.actions.Insert;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.firestore.auth.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -31,6 +38,7 @@ import java.util.List;
 
 
 public class AdapterRecyclerView extends RecyclerView.Adapter<AdapterRecyclerView.ViewHolder> {
+    static boolean isFav;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         ImageView imgIcon;
@@ -40,9 +48,12 @@ public class AdapterRecyclerView extends RecyclerView.Adapter<AdapterRecyclerVie
 
         public ViewHolder(View itemView) {
             super(itemView);
+
             itemView.setOnCreateContextMenuListener(this);
+            layoutView = itemView;
             imgIcon = itemView.findViewById(R.id.imagemview_list);
             txtCategoria = itemView.findViewById(R.id.text_categoria);
+            checkBox = itemView.findViewById(R.id.checkbox_favorito2);
             txtNomeLivro = itemView.findViewById(R.id.text_nome_livro_list);
             progressBar = itemView.findViewById(R.id.progressBarlistview);
         }
@@ -52,19 +63,24 @@ public class AdapterRecyclerView extends RecyclerView.Adapter<AdapterRecyclerVie
             menu.setHeaderTitle("Select The Action");
             menu.add(0, 0, 0, "Ver Info.");
             menu.add(0, 1, 1, "Abrir");
-            menu.add(0, 2, 2, "Editar");
-            menu.add(0, 3, 3, "deletar");
+            menu.add(0, 2, 2, "Baixar");
+            menu.add(0, 3, 3, "Salvar Favorito");
         }
     }
-
+    View layoutView;
+    private Insert insert;
     private List<Livro> mLivros;
     private Context mContext;
     private String url;
+    private String idUsuario;
+    private CheckBox checkBox;
     private ViewHolder mViewHolder;
 
     public AdapterRecyclerView(Context context,List<Livro> livro) {
         mLivros = livro;
         mContext = context;
+        Preferencias preferencias =  new Preferencias(mContext);
+        idUsuario = preferencias.getId();
     }
 
     @Override
@@ -87,6 +103,23 @@ public class AdapterRecyclerView extends RecyclerView.Adapter<AdapterRecyclerVie
         textViewCategoria.setText(livro.getCategoria());
         TextView textViewNome = mViewHolder.txtNomeLivro;
         textViewNome.setText(livro.getNome());
+        Log.i("Debug Favorito: ",Boolean.toString(livro.isFavorite()));
+        if (livro.isFavorite()){
+            checkBox.setChecked(true);
+        }else{
+            checkBox.setChecked(false);
+        }
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                insert = new Insert(mContext);
+                insert.saveUserFav(idUsuario,livro);
+                Snackbar.make(layoutView,"Adicionado aos seus favoritos", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            } else {
+                insert = new Insert(mContext);
+                insert.deleteUserFav(idUsuario,livro);
+            }
+        });
         ImageView imgIcon = mViewHolder.imgIcon;
         url = livro.getImgDownload();
         if (mViewHolder.imgIcon == null){

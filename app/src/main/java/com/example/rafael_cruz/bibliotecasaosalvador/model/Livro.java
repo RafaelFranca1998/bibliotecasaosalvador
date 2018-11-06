@@ -24,6 +24,7 @@ public class Livro {
 
     private String imgDownload;
 
+    private boolean isFavorite;
 
     public String getLinkDownload() {
         return linkDownload;
@@ -103,5 +104,13 @@ public class Livro {
 
     public void setImgDownload(String imgDownload) {
         this.imgDownload = imgDownload;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 }

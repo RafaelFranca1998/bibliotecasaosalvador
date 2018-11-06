@@ -156,4 +156,12 @@
     <string name="resultados_da_pesquisa">Resultados da pesquisa</string>
     <string name="recuperar_senha">Recuperar Senha</string>
     <string name="logo">Logo</string>
+    <string name="seus_eventos">Suas Ocorrências</string>
+    <string name="nome_do_usuario">Nome do Usuario</string>
+    <string name="email_do_usuario">Email do usuario</string>
+    <string name="trocar_foto">Trocar Foto</string>
+    <string name="img_usuario">img_usuario</string>
+    <string name="sobre">Sobre</string>
+    <string name="sair">Sair</string>
+    <string name="informacoes">Informações</string>
 </resources>
