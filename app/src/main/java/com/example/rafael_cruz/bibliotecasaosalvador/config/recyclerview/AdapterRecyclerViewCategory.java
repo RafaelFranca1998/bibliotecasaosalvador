@@ -37,9 +37,9 @@ public class AdapterRecyclerViewCategory extends RecyclerView.Adapter<AdapterRec
 
         ViewHolder(View itemView) {
             super(itemView);
-            imgCategory = itemView.findViewById(R.id.img_category);
-            txtCategory = itemView.findViewById(R.id.text_category);
-            progressBar = itemView.findViewById(R.id.category_progress_bar);
+            imgCategory = itemView.findViewById(R.id.image_view_list_category);
+            txtCategory = itemView.findViewById(R.id.txt_categoria_recyclerlist);
+            progressBar = itemView.findViewById(R.id.progress_bar_category);
         }
     }
 
@@ -59,8 +59,8 @@ public class AdapterRecyclerViewCategory extends RecyclerView.Adapter<AdapterRec
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View listView = inflater.inflate(R.layout.category_list, parent, false);
-        listView.setOnClickListener(new MainActivity.MyOnClickListener());
+        View listView = inflater.inflate(R.layout.recycler_cell_category, parent, false);
+        listView.setOnClickListener(new MainActivity.MyOnClickListenerRecomendados());
         ViewHolder viewHolder = new ViewHolder(listView);
         return viewHolder;
     }
@@ -70,9 +70,9 @@ public class AdapterRecyclerViewCategory extends RecyclerView.Adapter<AdapterRec
         Categoria categoria = mCategoriaList.get(position);
         mViewHolder = viewHolder;
 
-        TextView textViewCategoria = mViewHolder.txtCategory;
+       TextView textViewCategoria = mViewHolder.txtCategory;
         textViewCategoria.setText(categoria.getCategoryName());
-        ImageView imgIcon = mViewHolder.imgCategory;
+        mViewHolder.txtCategory.setText(categoria.getCategoryName());
         url = categoria.getImgDownload();
         if (mViewHolder.imgCategory == null){
             try {

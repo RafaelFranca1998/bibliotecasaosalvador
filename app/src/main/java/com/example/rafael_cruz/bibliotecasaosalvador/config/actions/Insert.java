@@ -8,43 +8,20 @@ package com.example.rafael_cruz.bibliotecasaosalvador.config.actions;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
-import com.example.rafael_cruz.bibliotecasaosalvador.config.Base64Custom;
-import com.example.rafael_cruz.bibliotecasaosalvador.config.DAO;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.ToHashMap;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Categoria;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Usuario;
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.auth.User;
-import com.google.firebase.storage.OnPausedListener;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.shockwave.pdfium.PdfDocument;
-import com.shockwave.pdfium.PdfiumCore;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 
 
 
@@ -67,7 +44,7 @@ public class Insert {
     public Insert(@NonNull Context context) {
         this.listener = null;
         this.sendListener = null;
-        mContext = context;
+        this.mContext = context;
     }
 
 
@@ -112,15 +89,40 @@ public class Insert {
         }
     }
 
-    public void deleteUserFav(String idUsuario, Livro l){
+    public void saveOffline(String idUsuario, Livro l){
         firebaseFirestore =  null;
+        Map < String, Object > livroOffline = new HashMap < > ();
+        livroOffline.putAll(ToHashMap.livroToHashMap(l));
         try {
             firebaseFirestore = FirebaseFirestore.getInstance();
             firebaseFirestore
                     .collection("usuarios")
                     .document(idUsuario)
-                    .collection("favoritos")
-                    .document(l.getIdLivro()).delete().addOnSuccessListener(aVoid -> {
+                    .collection("offline")
+                    .document(l.getIdLivro())
+                    .set(livroOffline)
+                    .addOnSuccessListener(aVoid -> {
+                if (listener != null) {
+                    listener.onCompleteInsert(null);
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void saveLastSee(String idUsuario, Livro l){
+        firebaseFirestore =  null;
+        Map < String, Object > newFav = new HashMap < > ();
+        newFav.putAll(ToHashMap.livroToHashMap(l));
+        try {
+            firebaseFirestore = FirebaseFirestore.getInstance();
+            firebaseFirestore
+                    .collection("usuarios")
+                    .document(idUsuario)
+                    .collection("recentes")
+                    .document(l.getIdLivro())
+                    .set(newFav).addOnSuccessListener(aVoid -> {
                         if (listener != null) {
                             listener.onCompleteInsert(null);
                         }
@@ -129,6 +131,8 @@ public class Insert {
             e.printStackTrace();
         }
     }
+
+
 
     private Map < String, Object > newContact;
     public void saveCategoryFireStore(Categoria categoria){
@@ -139,26 +143,23 @@ public class Insert {
             firebaseFirestore = FirebaseFirestore.getInstance();
             firebaseFirestore
                     .collection(mContext.getString(R.string.child_category))
-                    .document(mCategoria.getCategoryName()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                @Override
-                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                    assert documentSnapshot != null;
-                    if (!documentSnapshot.exists()){
-                        firebaseFirestore
-                                .collection(mContext.getString(R.string.child_category))
-                                .document(mCategoria.getCategoryName())
-                                .set(newContact)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        if (listener != null) {
-                                            listener.onCompleteInsert(null);
+                    .document(mCategoria.getCategoryName()).addSnapshotListener((documentSnapshot, e) -> {
+                        assert documentSnapshot != null;
+                        if (!documentSnapshot.exists()){
+                            firebaseFirestore
+                                    .collection(mContext.getString(R.string.child_category))
+                                    .document(mCategoria.getCategoryName())
+                                    .set(newContact)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            if (listener != null) {
+                                                listener.onCompleteInsert(null);
+                                            }
                                         }
-                                    }
-                                });
-                    }
-                }
-            });
+                                    });
+                        }
+                    });
         } catch (Exception e){
             e.printStackTrace();
         }

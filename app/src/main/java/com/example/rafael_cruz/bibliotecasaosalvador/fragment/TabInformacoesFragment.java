@@ -15,30 +15,34 @@ import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
 import com.google.firebase.auth.FirebaseAuth;
 
 
-public class Tab1Fragment extends Fragment {
+public class TabInformacoesFragment extends Fragment {
     private TextView emailUser;
     private TextView nameUser;
+    private TextView lastnameUser;
     private FirebaseAuth user;
     private String idUser;
 
 
-    public Tab1Fragment() {
+    public TabInformacoesFragment() {
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tab1,container,false);
+        View view = inflater.inflate(R.layout.fragment_tab_informacoes,container,false);
         emailUser = view.findViewById(R.id.txt_email_account);
         nameUser = view.findViewById(R.id.txt_account_username);
+        lastnameUser =  view.findViewById(R.id.txt_acount_lastname);
+
         user = FirebaseAuth.getInstance();
         if (user != null){
             idUser = user.getUid();
         }
         Preferencias preferencias = new Preferencias(getContext());
         emailUser.setText(preferencias.getEmail());
-        nameUser.setText(preferencias.getNome()+" "+preferencias.getSobrenome());
+        nameUser.setText(preferencias.getNome());
+        lastnameUser.setText(preferencias.getSobrenome());
         return view;
     }
 }

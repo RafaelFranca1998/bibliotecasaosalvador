@@ -5,26 +5,46 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Base64Custom;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.actions.Delete;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.actions.Insert;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 public class InfoActivity extends AppCompatActivity {
-    FirebaseFirestore firebaseFirestore;
+    private FirebaseFirestore firebaseFirestore;
     private String idLivro;
     private String idUsuario;
     private String livroNome;
@@ -45,10 +65,14 @@ public class InfoActivity extends AppCompatActivity {
     private String KEY;
     private String url;
     //----------------------------------------------------------------------------------------------
+    private ImageView imageViewThumbnail;
+    private ProgressBar progressBar;
     private File bookFile;
     private ProgressDialog dialog;
     private ProgressDialog progressDialogHorizontal;
     private double progress;
+    private Calendar myCalendar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +82,10 @@ public class InfoActivity extends AppCompatActivity {
         String TAG = getString(R.string.tag_debug);
         KEY = getString(R.string.tag_id);
 
+        myCalendar =  new GregorianCalendar();
+
+        progressBar =  findViewById(R.id.progress_bar_thumbnail);
+        imageViewThumbnail =  findViewById(R.id.image_view_thumbnail);
         buttonOpen = findViewById(R.id.bt_open_book);
         buttonBaixar =findViewById(R.id.bt_baixar_livro);
         buttonFavoritar =findViewById(R.id.bt_favoritar);
@@ -77,8 +105,6 @@ public class InfoActivity extends AppCompatActivity {
             idUsuario = preferencias.getId();
         }
 
-        getDatabase1();
-
         buttonOpen.setOnClickListener(v -> {
             Intent intent =
                     new Intent(InfoActivity.this,OpenBookActivity.class);
@@ -97,16 +123,34 @@ public class InfoActivity extends AppCompatActivity {
                 txtSituacao.setText(R.string.livro_n_baixado);
                 buttonBaixar.setEnabled(true);
                 buttonDeleteLocal.setEnabled(false);
+                Delete delete = new Delete(this);
+                delete.deleteOffline(idUsuario,livro);
             }
         });
 
         buttonFavoritar.setOnClickListener(v ->{
-            Insert insert =  new Insert(InfoActivity.this);
-            insert.saveUserFav(idUsuario,livro);
-            insert.addOnSuccessListener(taskSnapshot ->
-                    buttonFavoritar.setBackgroundColor(getResources().getColor(R.color.red)));
+            firebaseFirestore = FirebaseFirestore.getInstance();
+            firebaseFirestore
+                    .collection("usuarios")
+                    .document(idUsuario)
+                    .collection("favoritos")
+                    .document(idLivro).addSnapshotListener((documentSnapshot, e) -> {
+                if (Objects.requireNonNull(documentSnapshot).exists()){
+                    Delete delete =  new Delete(InfoActivity.this);
+                    delete.deleteUserFav(idUsuario,livro);
+                    delete.addOnSuccessListener(aVoid -> buttonFavoritar.setBackgroundColor(getResources().getColor(R.color.red)));
+                    firebaseFirestore = null;
+                } else {
+                    Insert insert =  new Insert(InfoActivity.this);
+                    insert.saveUserFav(idUsuario,livro);
+                    firebaseFirestore =  null;
+                    insert.addOnSuccessListener(taskSnapshot ->
+                            buttonFavoritar.setBackgroundColor(getResources().getColor(R.color.Branco))
+                    );
+                }
+            });
         });
-
+        getDatabase1();
     }
 
     private void getDatabase1(){
@@ -130,9 +174,15 @@ public class InfoActivity extends AppCompatActivity {
                         url = livro.getImgDownload();
                         livroNome = livro.getNome();
                         linkLivro = livro.getLinkDownload();
-                        bookFile = new File(getFilesDir(), Base64Custom.renoveSpaces(livro.getNome()));
+                        livro.setDataVisitado(updateLabelData());
+                        Insert insert =  new Insert(this);
+                        insert.saveLastSee(idUsuario,livro);
+                        String nomeLivro = Base64Custom.removeSpaces(livro.getNome());
+                        nomeLivro = Base64Custom.unaccent(nomeLivro);
+                        bookFile = new File(getFilesDir(),idLivro);
                         checkLocalFile();
                         dimissDialog();
+                        getImg();
                     } else {
                         Log.w("D", "Error getting documents.", task.getException());
                     }
@@ -176,8 +226,9 @@ public class InfoActivity extends AppCompatActivity {
     }
 
     private  void downloadFile(String url, final String nomeLivro) {
-        String mNome = Base64Custom.renoveSpaces(nomeLivro);
-        StorageReference islandRef = FirebaseStorage.getInstance().getReferenceFromUrl(url + "/" + mNome);
+        String mNome = Base64Custom.removeSpaces(nomeLivro);
+        mNome = Base64Custom.unaccent(mNome);
+        StorageReference islandRef = FirebaseStorage.getInstance().getReferenceFromUrl(url + "/livro.pdf");
         bookFile = new File(getFilesDir(), mNome);
         progressDialogHorizontal = new ProgressDialog(InfoActivity.this);
         islandRef.getFile(bookFile).addOnProgressListener(taskSnapshot -> {
@@ -192,6 +243,8 @@ public class InfoActivity extends AppCompatActivity {
             dialog.setProgress((int) progress);
         }).addOnSuccessListener(taskSnapshot -> {
             Log.e("firebase ", ";local tem file created  created " + bookFile.getAbsolutePath());
+            Insert insert =  new Insert(this);
+            insert.saveOffline(idUsuario,livro);
             txtSituacao.setTextColor(getResources().getColor(R.color.green));
             txtSituacao.setText(R.string.livro_baixado);
             buttonBaixar.setEnabled(false);
@@ -213,12 +266,51 @@ public class InfoActivity extends AppCompatActivity {
         }
     }
 
-    private boolean deleteLocalFile(String nomeLivro){
-        String mNome = Base64Custom.renoveSpaces(nomeLivro);
-        bookFile = new File(getFilesDir(), mNome);
+    private boolean deleteLocalFile(String id){
+        bookFile = new File(getFilesDir(), id);
+        Delete delete =  new Delete(this);
+        delete.deleteOffline(idLivro,livro);
         return bookFile.delete();
     }
 
+    public Date updateLabelData() {
+        String myFormat = "dd/MM/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, new Locale("pt","BR"));
+        return myCalendar.getTime();
+    }
+
+    public Date updateLabelHora() {
+        String myFormat = "HH:mm";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, new Locale("pt","BR"));
+        return myCalendar.getTime();
+
+    }
+
+    private void getImg(){
+        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(url);
+        if (!this.isFinishing ()) {
+            if (imageViewThumbnail == null){
+                imageViewThumbnail.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+            }
+            Glide.with(this).using(new FirebaseImageLoader())
+                    .load(storageReference)
+                    .listener(new RequestListener<StorageReference, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, StorageReference model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            imageViewThumbnail.setVisibility(View.VISIBLE);
+                            return false; // important to return false so the error placeholder can be placed
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, StorageReference model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            imageViewThumbnail.setVisibility(View.VISIBLE);
+                            return false;
+                        }}).into(imageViewThumbnail);
+        }
+    }
 
     public static boolean isConected(Context cont){
         ConnectivityManager conmag = (ConnectivityManager)cont.getSystemService(Context.CONNECTIVITY_SERVICE);

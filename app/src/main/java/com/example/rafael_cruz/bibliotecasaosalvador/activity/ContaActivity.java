@@ -2,9 +2,11 @@ package com.example.rafael_cruz.bibliotecasaosalvador.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -15,10 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.DAO;
@@ -27,7 +26,6 @@ import com.example.rafael_cruz.bibliotecasaosalvador.config.helper.PagerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -49,10 +47,10 @@ public class ContaActivity extends AppCompatActivity {
     private double progress;
     private ProgressDialog pd;
     private FirebaseAuth user;
+    private File userImg;
 
 
     public StorageReference storageReference;
-    private ValueEventListener valueEventListener;
 
 
 
@@ -62,16 +60,14 @@ public class ContaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conta);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_tab_layout);
-        setSupportActionBar(toolbar);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.divider));
+        tabLayout.addTab(tabLayout.newTab().setText("Informações"));
+        tabLayout.addTab(tabLayout.newTab().setText("Preferências"));
+        tabLayout.addTab(tabLayout.newTab().setText("Configu\nrações"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final ViewPager viewPager = findViewById(R.id.pager);
         final PagerAdapter adapter = new PagerAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
@@ -96,17 +92,19 @@ public class ContaActivity extends AppCompatActivity {
         //------------------------------------------------------------------------------------------
         imgAccount = findViewById(R.id.img_account);
         btChangeImg = findViewById(R.id.bt_trocar_ft);
-
         //------------------------------------------------------------------------------------------
         user = FirebaseAuth.getInstance();
         if (user != null){
             idUser = user.getUid();
         }
+        userImg = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
+                "/Biblioteca/Profile/user_image.png");
         Preferencias preferencias = new Preferencias(ContaActivity.this);
         url = "gs://bibliotecasaosalvador.appspot.com/images/account/"+ idUser +"/image_account.png";
         //------------------------------------------------------------------------------------------
-        //toolbar.setTitle(R.string.conta);
-        toolbar.setTitle("");
+        Toolbar toolbar = findViewById(R.id.toolbar_tab_layout);
+        toolbar.setTitle(R.string.conta);
+        setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp));
         toolbar.setNavigationOnClickListener(v -> finish());
 
@@ -118,8 +116,14 @@ public class ContaActivity extends AppCompatActivity {
         linkDownload = storageReference.getPath();
 
 
+        if (!isConected(this) && userImg.exists()){
+            getLocalImage();
+        }else {
+            updateImgAccount();
+        }
+
+
         btChangeImg.setOnClickListener(v -> shareImg());
-        updateImgAccount();
 
 
         Button btSair =  findViewById(R.id.bt_logout);
@@ -129,22 +133,6 @@ public class ContaActivity extends AppCompatActivity {
         });
     }
 
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -179,6 +167,7 @@ public class ContaActivity extends AppCompatActivity {
         System.out.println("Upload is " + progress + "% done");
         reference.getBytes(FIVE_MEGABYTE).addOnSuccessListener(bytes -> {
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            writeImg(bitmap);
             imgAccount.setImageBitmap(bitmap);
             pd.dismiss();
         }).addOnFailureListener(exception -> {
@@ -223,6 +212,11 @@ public class ContaActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    private void getLocalImage(){
+        Bitmap myBitmap = BitmapFactory.decodeFile(userImg.getAbsolutePath());
+        imgAccount.setImageBitmap(myBitmap);
     }
 
     private void deleteImage(){
@@ -291,5 +285,18 @@ public class ContaActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         imgAccount.setImageBitmap(null);
+    }
+
+    public static boolean isConected(Context cont){
+        ConnectivityManager conmag = (ConnectivityManager)cont.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if ( conmag != null ) {
+            conmag.getActiveNetworkInfo();
+
+            if (conmag.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) return true;
+
+            if (conmag.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()) return true;
+        }
+        return false;
     }
 }

@@ -3,6 +3,8 @@ package com.example.rafael_cruz.bibliotecasaosalvador.model;
 
 import android.support.annotation.NonNull;
 
+import java.util.Date;
+
 public class Livro {
     @NonNull private String idLivro;
 
@@ -25,6 +27,10 @@ public class Livro {
     private String imgDownload;
 
     private boolean isFavorite;
+
+    private Date dataAdicionado;
+
+    private Date dataVisitado;
 
     public String getLinkDownload() {
         return linkDownload;
@@ -112,5 +118,21 @@ public class Livro {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    public Date getDataAdicionado() {
+        return dataAdicionado;
+    }
+
+    public void setDataAdicionado(Date dataAdicionado) {
+        this.dataAdicionado = dataAdicionado;
+    }
+
+    public Date getDataVisitado() {
+        return dataVisitado;
+    }
+
+    public void setDataVisitado(Date dataVisitado) {
+        this.dataVisitado = dataVisitado;
     }
 }

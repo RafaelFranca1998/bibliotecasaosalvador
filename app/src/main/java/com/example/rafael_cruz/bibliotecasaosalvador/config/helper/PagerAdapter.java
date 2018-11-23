@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.example.rafael_cruz.bibliotecasaosalvador.fragment.Tab1Fragment;
-import com.example.rafael_cruz.bibliotecasaosalvador.fragment.Tab2Fragment;
-import com.example.rafael_cruz.bibliotecasaosalvador.fragment.Tab3Fragment;
+import com.example.rafael_cruz.bibliotecasaosalvador.fragment.TabInformacoesFragment;
+import com.example.rafael_cruz.bibliotecasaosalvador.fragment.TabPreferenciasFragment;
+import com.example.rafael_cruz.bibliotecasaosalvador.fragment.TabConfiguracoesFragment;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
@@ -21,13 +21,13 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                Tab1Fragment tab1 = new Tab1Fragment();
+                TabInformacoesFragment tab1 = new TabInformacoesFragment();
                 return tab1;
             case 1:
-                Tab2Fragment tab2 = new Tab2Fragment();
+                TabPreferenciasFragment tab2 = new TabPreferenciasFragment();
                 return tab2;
             case 2:
-                Tab3Fragment tab3 = new Tab3Fragment();
+                TabConfiguracoesFragment tab3 = new TabConfiguracoesFragment();
                 return tab3;
             default:
                 return null;

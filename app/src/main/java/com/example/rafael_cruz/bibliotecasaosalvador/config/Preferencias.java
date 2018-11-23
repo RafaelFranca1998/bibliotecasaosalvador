@@ -19,12 +19,18 @@ public class Preferencias {
     private int                         MODE = 0;
     private SharedPreferences.Editor    editor;
     //Chaves finais
+    //usuario
     private String CHAVE_NOME       = "nome";
     private String CHAVE_SOBRENOME  = "sobrenome";
     private String CHAVE_EMAIL      = "email";
     private String CHAVE_SENHA      = "senha";
     private String CHAVE_IDENTIFICADOR      = "identificador";
     private String CHAVE_IMAGEM_LINK      = "linkImg";
+    //preferencias
+    private String CHAVE_MODO_NOTURNO = "modo.noturno";
+    private String CHAVE_ENTRAR_AUTOMATICAMENTE = "entrar.automaticamente";
+
+
 
 
     public Preferencias(Context contextoParametro) {
@@ -40,6 +46,15 @@ public class Preferencias {
         editor.putString(CHAVE_SENHA,senha      );
         editor.putString(CHAVE_IDENTIFICADOR, id);
         editor.putString(CHAVE_IMAGEM_LINK,linkImg);
+        editor.commit();
+    }
+
+    public void salvarModoNoturno(boolean modoNoturno){
+        editor.putBoolean(CHAVE_MODO_NOTURNO,modoNoturno);
+        editor.commit();
+    }
+    public void salvarEntrarAutomaticamente(boolean entrarAutomaticamente){
+        editor.putBoolean(CHAVE_ENTRAR_AUTOMATICAMENTE,entrarAutomaticamente);
         editor.commit();
     }
 
@@ -63,24 +78,14 @@ public class Preferencias {
     public String getSobrenome(){
         return  preferences.getString(CHAVE_SOBRENOME,null);
     }
+    public boolean getModoNoturno(){
+        return  preferences.getBoolean(CHAVE_MODO_NOTURNO,false);
+    }
+    public boolean getEntrarAutmaticamente(){
+        return  preferences.getBoolean(CHAVE_ENTRAR_AUTOMATICAMENTE,true);
+    }
     public String getLinkImg(){
         return  preferences.getString(CHAVE_IMAGEM_LINK,null);
     }
-
-    public boolean isComplete(){
-        try {
-            getNome();
-            getEmail();
-            getId();
-            getSobrenome();
-            getId();
-            return true;
-        }catch (NullPointerException e){
-            Toast.makeText(contexto,"Não foi possivel salvar dados",Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-            return false;
-        }
-    }
-
 
 }

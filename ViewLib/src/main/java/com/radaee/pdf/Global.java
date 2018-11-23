@@ -22,9 +22,18 @@ import java.io.InputStream;
 public class Global
 {
 	public static int mLicenseType = 2;
-	public static String mCompany = "radaee";
-	public static String mEmail = "radaee_com@yahoo.cn";
-	public static String mKey = "LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO";
+	public static String mCompany = "Radaee";
+	public static String mEmail = "radaeepdf@gmail.com";
+	public static String mKey = "Q6EL00-BTB1EG-H3CRUZ-WAJQ9H-5R5V9L-KM0Y1L";
+
+
+	//boolean succeeded = activePremiumForVer(act, "Radaee", "radaeepdf@gmail.com","Q6EL00-BTB1EG-H3CRUZ-WAJQ9H-5R5V9L-KM0Y1L");
+
+
+//	public static String mCompany = "radaee";
+//	public static String mEmail = "radaee_com@yahoo.cn";
+//	public static String mKey = "LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO";
+
 
 	public static boolean Init(Context ctx)
     {
@@ -318,8 +327,7 @@ public class Global
 	/**
 	 * render as dark mode?
 	 */
-	//todo modificado false
-	public static boolean dark_mode = true;
+	public static boolean dark_mode = false;
 
 	/**
 	 * temp path, able after Init() invoked
@@ -780,7 +788,8 @@ public class Global
         }
 
 		// set configure to default value
-		default_config();
+		//todo aqui seta default
+		//default_config();
 		return ms_init;
 	}
 

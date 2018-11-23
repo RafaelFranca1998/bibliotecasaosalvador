@@ -14,20 +14,26 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Base64Custom;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.ToHashMap;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.AdapterRecyclerView;
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.AdapterRecyclerViewCategory;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.RecyclerItemClickListener;
+import com.example.rafael_cruz.bibliotecasaosalvador.model.Categoria;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -39,20 +45,35 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
     private static int itemPosition;
     private String KEY;
     private String ID_USER;
+
     private Livro livro;
-    private NavigationView navigationView=  null;
-    private Toolbar toolbar =  null;
+    private Livro livroRecente;
+
+
     private static List<Livro> listLivros;
+    private static List<Categoria> listCategoria;
+    private static List<Livro> listLivrosRecentes;
+
     @SuppressLint("StaticFieldLeak")
-    private static RecyclerView listView;
+    private static RecyclerView recyclerViewRecomendados;
+    private RecyclerView recyclerViewRecentes;
+    private RecyclerView recyclerViewCategoria;
+
     private AdapterRecyclerView adapterListView;
+    private AdapterRecyclerViewCategory adapterListViewCategoria;
+    private AdapterRecyclerView adapterListViewRecentes;
+
+    private LinearLayout ll_recentes;
+    private ScrollView scrollViewMain = null;
+    private NavigationView navigationView = null;
+    private Toolbar toolbar = null;
 
     //----------------------------------------------------------------------------------------------
     private File bookFile;
-    private ProgressDialog dialog;
     private ProgressDialog progressDialogHorizontal;
     private double progress;
 
@@ -63,11 +84,18 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         listLivros =  new ArrayList<>();
+        listCategoria =  new ArrayList<>();
+        listLivrosRecentes =  new ArrayList<>();
+        //------------------------------------------------------------------------------------------
         KEY = getString(R.string.tag_id);
         Preferencias preferencias =  new Preferencias(MainActivity.this);
         ID_USER = preferencias.getId();
         //-----------------------------------FIND VIEWS---------------------------------------------
-        listView =  findViewById(R.id.recycler_view_livros);
+        scrollViewMain = findViewById(R.id.scroll_view_main);
+        ll_recentes = findViewById(R.id.ll_visto_ultimo);
+        recyclerViewRecomendados = findViewById(R.id.recycler_view_livros);
+        recyclerViewCategoria = findViewById(R.id.recycler_view_category);
+        recyclerViewRecentes = findViewById(R.id.recycler_view_ultimos);
         toolbar = findViewById(R.id.toolbar_fav);
 
         setSupportActionBar(toolbar);
@@ -81,13 +109,44 @@ public class MainActivity extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         //-----------------------------------RECYCLERVIEW-------------------------------------------
-        adapterListView =  new AdapterRecyclerView(MainActivity.this,listLivros);
-        listView.setAdapter(adapterListView);
+        adapterListView =
+                new AdapterRecyclerView(MainActivity.this,listLivros);
+        adapterListViewCategoria =
+                new AdapterRecyclerViewCategory(MainActivity.this,listCategoria);
+        adapterListViewRecentes =
+                new AdapterRecyclerView(MainActivity.this,listLivrosRecentes);
+        //------------------------------------------------------------------------------------------
+        recyclerViewCategoria.setAdapter(adapterListViewCategoria);
+        recyclerViewRecomendados.setAdapter(adapterListView);
+        recyclerViewRecentes.setAdapter(adapterListViewRecentes);
+        //------------------------------------------------------------------------------------------
+        StaggeredGridLayoutManager gridLayoutManagerRecentes =
+                new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         StaggeredGridLayoutManager gridLayoutManager =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.HORIZONTAL);
-        listView.setLayoutManager(gridLayoutManager);
-        listView.addOnItemTouchListener(
-                new RecyclerItemClickListener(this, listView ,new RecyclerItemClickListener.OnItemClickListener() {
+                new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+        StaggeredGridLayoutManager gridLayoutManagerCategoria =
+                new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+        //------------------------------------------------------------------------------------------
+        recyclerViewRecomendados.setLayoutManager(gridLayoutManager);
+        recyclerViewRecentes.setLayoutManager(gridLayoutManagerRecentes);
+        recyclerViewCategoria.setLayoutManager(gridLayoutManagerCategoria);
+        //------------------------------------------------------------------------------------------
+        recyclerViewRecentes.addOnItemTouchListener(new RecyclerItemClickListener
+                (this, recyclerViewRecomendados, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Intent intent = new Intent(MainActivity.this,InfoActivity.class);
+                        intent.putExtra(KEY,listLivros.get(position).getIdLivro());
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+                    }
+                }));
+        recyclerViewRecomendados.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, recyclerViewRecomendados,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
                         Intent intent = new Intent(MainActivity.this,InfoActivity.class);
                         intent.putExtra(KEY,listLivros.get(position).getIdLivro());
@@ -103,7 +162,16 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        updateList();
+        updateRecomendados();
+        if (isConnected()){
+            if(ID_USER!= null) {
+                updateVistoUltimo();
+            }
+            ll_recentes.setVisibility(View.VISIBLE);
+        } else {
+            ll_recentes.setVisibility(View.GONE);
+        }
+        updateCategorias();
         toolbar.setTitle("Principal");
         navigationView.setCheckedItem(R.id.nav_inicio);
     }
@@ -118,12 +186,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -170,28 +232,17 @@ public class MainActivity extends AppCompatActivity
         return super.onContextItemSelected(item);
     }
 
-    private void updateList(){
+    private void updateRecomendados(){
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore
                 .collection(getString(R.string.child_book))
+                .orderBy("dataAdicionado",Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         listLivros.clear();
                         for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             livro = document.toObject(Livro.class);
-                            firebaseFirestore
-                                    .collection("usuarios")
-                                    .document(ID_USER)
-                                    .collection("favoritos")
-                                    .document(livro.getIdLivro())
-                                    .addSnapshotListener((documentSnapshot, e) -> {
-                                        if (Objects.requireNonNull(documentSnapshot).exists()){
-                                            livro.setFavorite(true);
-                                        }else{
-                                            livro.setFavorite(false);
-                                        }
-                                    });
                             listLivros.add(livro) ;
                         }
                         adapterListView.notifyDataSetChanged();
@@ -201,8 +252,70 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
+    private void updateVistoUltimo(){
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        scrollViewMain.setVisibility(View.GONE);
+        firebaseFirestore
+                .collection("usuarios")
+                .document(ID_USER)
+                .collection("recentes")
+                .orderBy("dataVisitado",Query.Direction.DESCENDING)
+                .get().addOnSuccessListener(queryDocumentSnapshots -> {
+            listLivrosRecentes.clear();
+            for (DocumentSnapshot documentSnapshot:queryDocumentSnapshots) {
+                livroRecente = ToHashMap.hashMapToLivro(documentSnapshot.getData());
+                listLivrosRecentes.add(livroRecente);
+                if (listLivrosRecentes.size()>= 5){
+                    break;
+                }
+            }
+            scrollViewMain.setVisibility(View.VISIBLE);
+            adapterListViewRecentes.notifyDataSetChanged();
+        }).addOnCompleteListener(task -> scrollViewMain.setVisibility(View.VISIBLE))
+                .addOnCanceledListener(() -> scrollViewMain.setVisibility(View.VISIBLE))
+                .addOnFailureListener(e -> scrollViewMain.setVisibility(View.VISIBLE));
+    }
+
+    private void updateCategorias(){
+        FirebaseFirestore firebaseFirestore =  FirebaseFirestore.getInstance();
+
+        firebaseFirestore
+                .collection("categorias")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        listCategoria.clear();
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            listCategoria.add(document.toObject(Categoria.class)) ;
+                        }
+                        adapterListViewCategoria.notifyDataSetChanged();
+                    } else {
+                        Log.w("Error: ", "Error getting documents.", task.getException());
+                    }
+                });
+    }
+
+    private void updateAleatorio(){
+        FirebaseFirestore firebaseFirestore =  FirebaseFirestore.getInstance();
+
+        firebaseFirestore
+                .collection("livros")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        listCategoria.clear();
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            listCategoria.add(document.toObject(Categoria.class)) ;
+                        }
+                        adapterListViewCategoria.notifyDataSetChanged();
+                    } else {
+                        Log.w("Error: ", "Error getting documents.", task.getException());
+                    }
+                });
+    }
+
     private  void downloadFile(String url, final String nomeLivro) {
-        String mNome = Base64Custom.renoveSpaces(nomeLivro);
+        String mNome = Base64Custom.removeSpaces(nomeLivro);
         StorageReference islandRef = FirebaseStorage.getInstance().getReferenceFromUrl(url + "/" + mNome);
         bookFile = new File(getFilesDir(), mNome);
         if (!bookFile.exists()) {
@@ -216,7 +329,6 @@ public class MainActivity extends AppCompatActivity
                     progressDialogHorizontal.show();
                 }
                 progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                dialog.setProgress((int) progress);
             }).addOnSuccessListener(taskSnapshot -> {
                 Log.e("firebase ", ";local tem file created  created " + bookFile.getAbsolutePath());
                 progressDialogHorizontal.dismiss();
@@ -231,26 +343,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_about){
-//            AboutFragment fragment = new AboutFragment();
-//            android.support.v4.app.FragmentTransaction fragmentTransaction =
-//                    getSupportFragmentManager().beginTransaction();
-//            fragmentTransaction.replace(R.id.fragment_container, fragment);
-//            fragmentTransaction.commit();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -267,20 +361,16 @@ public class MainActivity extends AppCompatActivity
             if (!item.isChecked()){
                 Intent intent =  new Intent(MainActivity.this,FavoritosActivity.class);
                 startActivity(intent);}
-        }else if (id == R.id.nav_preferencias) {
-            if (!item.isChecked()){
-//            PreferenciasFragment fragment= new PreferenciasFragment();
-//            android.support.v4.app.FragmentTransaction fragmentTransaction =
-//                    getSupportFragmentManager().beginTransaction();
-//            fragmentTransaction.replace(R.id.fragment_container, fragment);
-//            fragmentTransaction.commit();
-            }
         } else if (id == R.id.nav_share) {
-
+            //share
+        }else if (id == R.id.nav_disponivel_offline) {
+            if (!item.isChecked()){
+                Intent intent =  new Intent(MainActivity.this,DisponivelOfflineActivity.class);
+                startActivity(intent);}
         } else if (id == R.id.nav_send) {
-
+            //send
         }else if (id == R.id.nav_conta) {
-            if (isConected()){
+            if (isConnected()){
                 Intent intent =  new Intent(MainActivity.this,ContaActivity.class);
                 startActivity( intent );
             } else {
@@ -288,23 +378,36 @@ public class MainActivity extends AppCompatActivity
                 startActivity( intent );
             }
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    public static class MyOnClickListener implements View.OnClickListener {
+    public static class MyOnClickListenerRecomendados implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            itemPosition = listView.indexOfChild(v);
+            itemPosition = recyclerViewRecomendados.indexOfChild(v);
         }
     }
 
-    private boolean isConected(){
+    private boolean isConnected(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         return user != null;
     }
 
+    /** todo aqui código favorito
+     *  firebaseFirestore
+     *                                     .collection("livros")
+     *                                     .document(ID_USER)
+     *                                     .collection("favoritos")
+     *                                     .document(livro.getIdLivro())
+     *                                     .addSnapshotListener((documentSnapshot, e) -> {
+     *                                         if (Objects.requireNonNull(documentSnapshot).exists()){
+     *                                             livro.setFavorite(true);
+     *                                         }else{
+     *                                             livro.setFavorite(false);
+     *                                         }
+     *                                     });
+     */
 
 }

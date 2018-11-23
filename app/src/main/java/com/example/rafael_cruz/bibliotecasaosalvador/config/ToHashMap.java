@@ -31,25 +31,26 @@ public class ToHashMap {
         object.setImgDownload( m.get("imgDownload"));
         return object;
     }
-    public static HashMap<String,String> livroToHashMap(Livro object){
-        HashMap<String,String> map =  new HashMap<>();
+    public static HashMap<String,Object> livroToHashMap(Livro object){
+        HashMap<String,Object> map =  new HashMap<>();
         try {
             map.put("nome", object.getNome());
             map.put("idLivro", object.getIdLivro());
             map.put("editora", object.getEditora());
-        //  map.put("edicao", object.getEdicao());
             map.put("ano", object.getAno());
             map.put("autor", object.getAutor());
             map.put("categoria", object.getCategoria());
             map.put("area", object.getArea());
             map.put("linkDownload", object.getLinkDownload());
             map.put("imgDownload", object.getImgDownload());
-        //  map.put("endereçoLocal", object.getEndereçoLocal());
+            map.put("dataAdicionado", object.getDataAdicionado());
+            map.put("dataVisitado", object.getDataVisitado());
         }catch (Exception e){
             e.printStackTrace();
         }
         return map;
     }
+    //todo ainda falta
     public static Livro hashMapToLivro(Map<String, Object> map){
         Livro  object =  new Livro();
         try {

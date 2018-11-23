@@ -6,6 +6,7 @@ public class Usuario {
     private String sobreNome;
     private String email;
     private String senha;
+    private String curso;
     private String linkImgAccount;
 
     public String getIdUsuario() {

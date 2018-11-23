@@ -18,9 +18,9 @@
             android:icon="@drawable/ic_star_white_24dp"
             android:title="@string/favoritos" />
         <item
-            android:id="@+id/nav_preferencias"
-            android:icon="@drawable/configuracao_icon_white"
-            android:title="@string/prefer_ncias" />
+            android:id="@+id/nav_disponivel_offline"
+            android:icon="@drawable/ic_file_download_black_24dp"
+            android:title="Disponiveis Offline" />
         <item
             android:id="@+id/nav_conta"
             android:icon="@drawable/ic_person_black_24dp"

@@ -6,15 +6,11 @@
 package com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,7 +32,6 @@ import java.util.List;
 
 
 public class AdapterRecyclerViewFavoritos extends RecyclerView.Adapter<AdapterRecyclerViewFavoritos.ViewHolder> {
-    static boolean isFav;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         ImageView imgIcon;
@@ -51,7 +46,6 @@ public class AdapterRecyclerViewFavoritos extends RecyclerView.Adapter<AdapterRe
             layoutView = itemView;
             imgIcon = itemView.findViewById(R.id.imagemview_list);
             txtCategoria = itemView.findViewById(R.id.text_categoria);
-            checkBox = itemView.findViewById(R.id.checkbox_favorito2);
             txtNomeLivro = itemView.findViewById(R.id.text_nome_livro_list);
             progressBar = itemView.findViewById(R.id.progressBarlistview);
         }
@@ -71,7 +65,6 @@ public class AdapterRecyclerViewFavoritos extends RecyclerView.Adapter<AdapterRe
     private Context mContext;
     private String url;
     private String idUsuario;
-    private CheckBox checkBox;
     private ViewHolder mViewHolder;
 
     public AdapterRecyclerViewFavoritos(Context context,List<Livro> livro) {
@@ -87,7 +80,7 @@ public class AdapterRecyclerViewFavoritos extends RecyclerView.Adapter<AdapterRe
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View listView = inflater.inflate(R.layout.recycler_cell, parent, false);
-        listView.setOnClickListener(new MainActivity.MyOnClickListener());
+        listView.setOnClickListener(new MainActivity.MyOnClickListenerRecomendados());
         ViewHolder viewHolder = new ViewHolder(listView);
         return viewHolder;
     }
@@ -101,23 +94,6 @@ public class AdapterRecyclerViewFavoritos extends RecyclerView.Adapter<AdapterRe
         textViewCategoria.setText(livro.getCategoria());
         TextView textViewNome = mViewHolder.txtNomeLivro;
         textViewNome.setText(livro.getNome());
-        Log.i("Debug Favorito: ",Boolean.toString(livro.isFavorite()));
-        if (livro.isFavorite()){
-            checkBox.setChecked(true);
-        }else{
-            checkBox.setChecked(false);
-        }
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked){
-                insert = new Insert(mContext);
-                insert.saveUserFav(idUsuario,livro);
-                Snackbar.make(layoutView,"Adicionado aos seus favoritos", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            } else {
-                insert = new Insert(mContext);
-                insert.deleteUserFav(idUsuario,livro);
-            }
-        });
         ImageView imgIcon = mViewHolder.imgIcon;
         url = livro.getImgDownload();
         if (mViewHolder.imgIcon == null){

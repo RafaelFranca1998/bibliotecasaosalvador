@@ -3,11 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.Tab1Fragment">
+    tools:context=".fragment.TabInformacoesFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <TextView
@@ -115,6 +118,12 @@
                 android:layout_weight="1"
                 android:text="TextView" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Editar Informações" />
 
     </LinearLayout>
 

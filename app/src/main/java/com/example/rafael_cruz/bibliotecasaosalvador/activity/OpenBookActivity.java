@@ -1,8 +1,3 @@
-/******************************************************************************
- * Copyright (c) 2018. all rights are reserved to the authors of this project, unauthorized use of this code in
- * other projects may result in legal complications.                          *
- ******************************************************************************/
-
 package com.example.rafael_cruz.bibliotecasaosalvador.activity;
 
 import android.app.ProgressDialog;
@@ -14,6 +9,8 @@ import android.widget.Toast;
 
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Base64Custom;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.actions.Insert;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,7 +21,12 @@ import com.radaee.reader.PDFViewAct;
 
 import java.io.File;
 
-
+/**
+ * Open Book Activity.
+ * atividade para Abrir um livro.
+ *
+ * @author Rafael frança
+ */
 public class OpenBookActivity extends AppCompatActivity {
     FirebaseFirestore firebaseFirestore;
     private String idLivro;
@@ -49,7 +51,6 @@ public class OpenBookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_book);
-
 
         Bundle extra = getIntent().getExtras();
         if (extra!= null){
@@ -84,10 +85,11 @@ public class OpenBookActivity extends AppCompatActivity {
     private File bookFile;
 
     private  void downloadFile(String url, final String nomeLivro) {
-        String mNome = Base64Custom.renoveSpaces(nomeLivro);
-        StorageReference islandRef = FirebaseStorage.getInstance().getReferenceFromUrl(url + "/" + mNome);
+        String mNome = Base64Custom.removeSpaces(nomeLivro);
+        StorageReference islandRef =
+                FirebaseStorage.getInstance().getReferenceFromUrl(url+"/livro.pdf");
 
-        bookFile = new File(getFilesDir(), mNome);
+        bookFile = new File(getFilesDir(), idLivro);
 
         if (bookFile.exists()) {
             abrirLivro(bookFile.getAbsolutePath());
@@ -108,6 +110,9 @@ public class OpenBookActivity extends AppCompatActivity {
             }).addOnSuccessListener(taskSnapshot -> {
                 Log.e("firebase ", ";local tem file created  created " + bookFile.getAbsolutePath());
                 //  updateDb(timestamp,localFile.toString(),position);
+                Insert insert =  new Insert(this);
+                Preferencias preferencias =  new Preferencias(this);
+                insert.saveOffline(preferencias.getId(),livro);
                 abrirLivro(bookFile.getAbsolutePath());
             }).addOnFailureListener(exception -> {
                 exception.getCause();
@@ -121,7 +126,9 @@ public class OpenBookActivity extends AppCompatActivity {
     private void abrirLivro(String caminhoDoArquivo){
         if (caminhoDoArquivo != null && !caminhoDoArquivo.equals("")) {
             try {
+                Preferencias preferencias =  new Preferencias(this);
                 Global.Init(OpenBookActivity.this);
+                Global.dark_mode = preferencias.getModoNoturno();
                 Intent intent = new Intent();
                 intent.setClass(this, PDFViewAct.class);
                 intent.putExtra("PDFPath", caminhoDoArquivo);

@@ -27,19 +27,19 @@ public class Delete {
     private Context mContext;
     private Livro mLivro;
 
-    public Delete(Context context,Livro livro) {
+    public Delete(Context context) {
         this.listener = null;
         mContext = context;
-        mLivro = livro;
     }
 
-    public void deleteBook(){
+    public void deleteBook(Livro livro){
+        mLivro = livro;
         StorageReference deleteRef = FirebaseStorage.getInstance()
-                .getReferenceFromUrl(mLivro.getLinkDownload()+"/"+Base64Custom.renoveSpaces(mLivro.getNome()));
+                .getReferenceFromUrl(mLivro.getLinkDownload()+"/"+Base64Custom.removeSpaces(mLivro.getNome()));
         deleteRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                deleteThumbnail();
+                deleteThumbnail(mLivro);
                 Toast.makeText(mContext,R.string.delete_successful,Toast.LENGTH_LONG).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -51,13 +51,52 @@ public class Delete {
 
     }
 
-    private void deleteThumbnail(){
+    public void deleteUserFav(String idUsuario, Livro l){
+        FirebaseFirestore firebaseFirestore =  null;
+        try {
+            firebaseFirestore = FirebaseFirestore.getInstance();
+            firebaseFirestore
+                    .collection("usuarios")
+                    .document(idUsuario)
+                    .collection("favoritos")
+                    .document(l.getIdLivro()).delete().addOnSuccessListener(aVoid -> {
+                if (listener != null) {
+                    listener.onCompleteInsert(null);
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteOffline(String idUsuario, Livro l){
+        FirebaseFirestore firebaseFirestore =  null;
+        try {
+            firebaseFirestore = FirebaseFirestore.getInstance();
+            firebaseFirestore
+                    .collection("usuarios")
+                    .document(idUsuario)
+                    .collection("offline")
+                    .document(l.getIdLivro())
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        if (listener != null) {
+                            listener.onCompleteInsert(null);
+                        }
+                    });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteThumbnail(Livro livro){
+        mLivro = livro;
         StorageReference deleteTumbnailRef = FirebaseStorage.getInstance()
                 .getReferenceFromUrl(mLivro.getImgDownload());
         deleteTumbnailRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                deleteDataFiresTore();
+                deleteDataFiresTore(mLivro);
                 Toast.makeText(mContext,R.string.delete_successful+" "+R.string.deleted_image,Toast.LENGTH_LONG).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -69,14 +108,15 @@ public class Delete {
     }
 
 
-    private void deleteDataFiresTore(){
+    private void deleteDataFiresTore(Livro livro){
+        mLivro = livro;
         FirebaseFirestore mFirebaseFirestore = FirebaseFirestore.getInstance();
         mFirebaseFirestore.collection(mContext.getString(R.string.child_book))
                 .document(mLivro.getIdLivro())
                 .delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                deleteThumbnail();
+                deleteThumbnail(mLivro);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

@@ -2,6 +2,8 @@ package com.example.rafael_cruz.bibliotecasaosalvador.config;
 
 import android.util.Base64;
 
+import java.text.Normalizer;
+
 public class Base64Custom {
 
     public static String codificarBase64(String texto){
@@ -16,11 +18,17 @@ public class Base64Custom {
     public static String removeUrl(String textoUrl){
         return textoUrl.replaceAll("https://ecossocial-2c0dc.firebaseio.com/events/","");
     }
-    public static String renoveSpaces(String textoUrl){
+    public static String removeSpaces(String textoUrl){
         String text = textoUrl;
         text = text.replaceAll("\\s","-");
         text = text.replaceAll("_","-");
         return text;
+    }
+
+    public static String unaccent(String src) {
+        return Normalizer
+                .normalize(src, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "");
     }
 
 }

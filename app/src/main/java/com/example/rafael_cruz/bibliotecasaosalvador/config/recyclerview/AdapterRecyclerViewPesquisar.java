@@ -6,6 +6,7 @@
 package com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -31,9 +32,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.List;
 
 
-
-public class AdapterRecyclerView extends RecyclerView.Adapter<AdapterRecyclerView.ViewHolder> {
-    static boolean isFav;
+public class AdapterRecyclerViewPesquisar extends RecyclerView.Adapter<AdapterRecyclerViewPesquisar.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         ImageView imgIcon;
@@ -41,15 +40,15 @@ public class AdapterRecyclerView extends RecyclerView.Adapter<AdapterRecyclerVie
         TextView txtNomeLivro;
         ProgressBar progressBar;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
 
             itemView.setOnCreateContextMenuListener(this);
             layoutView = itemView;
-            imgIcon = itemView.findViewById(R.id.imagemview_list);
-            txtCategoria = itemView.findViewById(R.id.text_categoria);
-            txtNomeLivro = itemView.findViewById(R.id.text_nome_livro_list);
-            progressBar = itemView.findViewById(R.id.progressBarlistview);
+            imgIcon = itemView.findViewById(R.id.imagemview_pesquisa);
+            txtCategoria = itemView.findViewById(R.id.text_categoria_pesquisar);
+            txtNomeLivro = itemView.findViewById(R.id.text_nome_livro_pesquisa);
+            progressBar = itemView.findViewById(R.id.progressBarpesquisar);
         }
 
         @Override
@@ -61,7 +60,7 @@ public class AdapterRecyclerView extends RecyclerView.Adapter<AdapterRecyclerVie
             menu.add(0, 3, 3, "Salvar Favorito");
         }
     }
-    View layoutView;
+    private View layoutView;
     private Insert insert;
     private List<Livro> mLivros;
     private Context mContext;
@@ -69,26 +68,28 @@ public class AdapterRecyclerView extends RecyclerView.Adapter<AdapterRecyclerVie
     private String idUsuario;
     private ViewHolder mViewHolder;
 
-    public AdapterRecyclerView(Context context,List<Livro> livro) {
+    public AdapterRecyclerViewPesquisar(Context context, List<Livro> livro) {
         mLivros = livro;
         mContext = context;
         Preferencias preferencias =  new Preferencias(mContext);
         idUsuario = preferencias.getId();
     }
 
+
+    @NonNull
     @Override
-    public AdapterRecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AdapterRecyclerViewPesquisar.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View listView = inflater.inflate(R.layout.recycler_cell, parent, false);
+        View listView = inflater.inflate(R.layout.recycler_cell_pesquisar, parent, false);
         listView.setOnClickListener(new MainActivity.MyOnClickListenerRecomendados());
         ViewHolder viewHolder = new ViewHolder(listView);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         Livro livro = mLivros.get(position);
         mViewHolder = viewHolder;
 
