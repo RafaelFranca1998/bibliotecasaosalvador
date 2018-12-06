@@ -74,7 +74,8 @@
         </activity>
         <activity android:name=".activity.TransitionActivity" />
         <activity android:name=".activity.DisponivelOfflineActivity" />
-        <activity android:name=".activity.TrocarSenhaActivity"></activity>
+        <activity android:name=".activity.TrocarSenhaActivity" />
+        <activity android:name=".activity.CategoriasActivity"></activity>
     </application>
 
 </manifest>

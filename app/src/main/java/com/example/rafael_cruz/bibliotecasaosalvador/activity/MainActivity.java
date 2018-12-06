@@ -156,6 +156,17 @@ public class MainActivity extends AppCompatActivity
                     }
                 })
         );
+        recyclerViewCategoria.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, recyclerViewCategoria,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Intent intent = new Intent(MainActivity.this,CategoriasActivity.class);
+                        intent.putExtra("categoria",listCategoria.get(position).getCategoryName());
+                        startActivity(intent);                    }
+                    @Override public void onLongItemClick(View view, int position) {
+                        itemPosition = position;
+                    }
+                })
+        );
         //------------------------------------------------------------------------------------------
     }
 

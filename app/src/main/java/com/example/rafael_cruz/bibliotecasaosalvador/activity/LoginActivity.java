@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
@@ -88,9 +89,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(view -> attemptLogin());
 
-        Button mRegisterButton =  findViewById(R.id.bt_registrar);
+        TextView mRegisterTxt =  findViewById(R.id.txt_registrar);
 
-        mRegisterButton.setOnClickListener(v -> {
+        mRegisterTxt.setOnClickListener(v -> {
             Intent intent =  new Intent(LoginActivity.this,RegistroActivity.class);
             startActivity(intent);
             finish();

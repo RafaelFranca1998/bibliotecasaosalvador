@@ -138,7 +138,8 @@ public class InfoActivity extends AppCompatActivity {
                 if (Objects.requireNonNull(documentSnapshot).exists()){
                     Delete delete =  new Delete(InfoActivity.this);
                     delete.deleteUserFav(idUsuario,livro);
-                    delete.addOnSuccessListener(aVoid -> buttonFavoritar.setBackgroundColor(getResources().getColor(R.color.red)));
+                    delete.addOnSuccessListener(aVoid ->
+                            buttonFavoritar.setBackgroundColor(getResources().getColor(R.color.red)));
                     firebaseFirestore = null;
                 } else {
                     Insert insert =  new Insert(InfoActivity.this);
