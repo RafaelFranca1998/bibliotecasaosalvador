@@ -1,11 +1,7 @@
 package com.example.rafael_cruz.bibliotecasaosalvador.activity;
 
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,6 +11,9 @@ import com.example.rafael_cruz.bibliotecasaosalvador.config.DAO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * Trocar senha
+ */
 public class TrocarSenhaActivity extends AppCompatActivity {
 
     private FirebaseAuth auntenticacao;
@@ -43,8 +42,8 @@ public class TrocarSenhaActivity extends AppCompatActivity {
         String oldPassword = editTextAntigaSenha.getText().toString();
 
         auntenticacao
-                .signInWithEmailAndPassword(user.getEmail(),oldPassword)
-                .addOnSuccessListener(authResult -> user.updatePassword(newPassword)
+                .signInWithEmailAndPassword(user.getEmail(),oldPassword) //loga no firebase
+                .addOnSuccessListener(authResult -> user.updatePassword(newPassword)//se bem sucedido atualiza
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(this,

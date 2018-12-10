@@ -165,4 +165,5 @@
     <string name="sair">Sair</string>
     <string name="informacoes">Informações</string>
     <string name="preferencias">Preferências</string>
+    <string name="title_activity_edit_user_info">EditUserInfoActivity</string>
 </resources>

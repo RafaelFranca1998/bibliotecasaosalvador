@@ -10,7 +10,6 @@
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:id="@+id/txt_senha_antiga"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Senha Antiga" />
@@ -23,7 +22,6 @@
         android:inputType="textPassword" />
 
     <TextView
-        android:id="@+id/textView18"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Nova Senha" />

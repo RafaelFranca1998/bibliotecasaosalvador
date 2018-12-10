@@ -43,20 +43,14 @@ public class TabPreferenciasFragment extends Fragment {
         modoNoturnoSwitch.setChecked(modoNoturno);
         entrarAutomaticamenteSwitch.setChecked(entrarAutomaticamente);
 
-        modoNoturnoSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                modoNoturno = isChecked;
-                preferencias.salvarModoNoturno(modoNoturno);
-            }
+        modoNoturnoSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            modoNoturno = isChecked;
+            preferencias.salvarModoNoturno(modoNoturno);
         });
 
-        entrarAutomaticamenteSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                entrarAutomaticamente = isChecked;
-                preferencias.salvarEntrarAutomaticamente(entrarAutomaticamente);
-            }
+        entrarAutomaticamenteSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            entrarAutomaticamente = isChecked;
+            preferencias.salvarEntrarAutomaticamente(entrarAutomaticamente);
         });
         return view;
     }

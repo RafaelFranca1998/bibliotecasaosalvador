@@ -20,7 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.example.rafael_cruz.bibliotecasaosalvador.config.Base64Custom;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.MyCustomUtil;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.ToHashMap;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.AdapterRecyclerView;
@@ -177,6 +177,8 @@ public class MainActivity extends AppCompatActivity
         if (isConnected()){
             if(ID_USER!= null) {
                 updateVistoUltimo();
+            }else {
+                ll_recentes.setVisibility(View.GONE);
             }
             ll_recentes.setVisibility(View.VISIBLE);
         } else {
@@ -282,6 +284,9 @@ public class MainActivity extends AppCompatActivity
             }
             scrollViewMain.setVisibility(View.VISIBLE);
             adapterListViewRecentes.notifyDataSetChanged();
+            if (listLivrosRecentes.size()== 0){
+                ll_recentes.setVisibility(View.GONE);
+            }
         }).addOnCompleteListener(task -> scrollViewMain.setVisibility(View.VISIBLE))
                 .addOnCanceledListener(() -> scrollViewMain.setVisibility(View.VISIBLE))
                 .addOnFailureListener(e -> scrollViewMain.setVisibility(View.VISIBLE));
@@ -326,7 +331,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private  void downloadFile(String url, final String nomeLivro) {
-        String mNome = Base64Custom.removeSpaces(nomeLivro);
+        String mNome = MyCustomUtil.removeSpaces(nomeLivro);
         StorageReference islandRef = FirebaseStorage.getInstance().getReferenceFromUrl(url + "/" + mNome);
         bookFile = new File(getFilesDir(), mNome);
         if (!bookFile.exists()) {
@@ -372,15 +377,11 @@ public class MainActivity extends AppCompatActivity
             if (!item.isChecked()){
                 Intent intent =  new Intent(MainActivity.this,FavoritosActivity.class);
                 startActivity(intent);}
-        } else if (id == R.id.nav_share) {
-            //share
-        }else if (id == R.id.nav_disponivel_offline) {
+        } else if (id == R.id.nav_disponivel_offline) {
             if (!item.isChecked()){
                 Intent intent =  new Intent(MainActivity.this,DisponivelOfflineActivity.class);
                 startActivity(intent);}
-        } else if (id == R.id.nav_send) {
-            //send
-        }else if (id == R.id.nav_conta) {
+        } else if (id == R.id.nav_conta) {
             if (isConnected()){
                 Intent intent =  new Intent(MainActivity.this,ContaActivity.class);
                 startActivity( intent );

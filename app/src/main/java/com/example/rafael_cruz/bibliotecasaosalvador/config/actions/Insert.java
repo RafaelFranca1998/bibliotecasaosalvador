@@ -58,7 +58,8 @@ public class Insert {
             firebaseFirestore
                     .collection("usuarios")
                     .document(mUsuario.getIdUsuario())
-                    .set(newUser).addOnSuccessListener(aVoid -> {
+                    .set(newUser)
+                    .addOnSuccessListener(aVoid -> {
                         if (listener != null) {
                             listener.onCompleteInsert(null);
                         }
@@ -89,7 +90,7 @@ public class Insert {
         }
     }
 
-    public void saveOffline(String idUsuario, Livro l){
+    public void bookUserOffline(String idUsuario, Livro l){
         firebaseFirestore =  null;
         Map < String, Object > livroOffline = new HashMap < > ();
         livroOffline.putAll(ToHashMap.livroToHashMap(l));
@@ -131,42 +132,6 @@ public class Insert {
             e.printStackTrace();
         }
     }
-
-
-
-    private Map < String, Object > newContact;
-    public void saveCategoryFireStore(Categoria categoria){
-        mCategoria = categoria;
-        newContact = new HashMap < > ();
-        newContact.putAll(ToHashMap.categoryToHashMap(mCategoria));
-        try {
-            firebaseFirestore = FirebaseFirestore.getInstance();
-            firebaseFirestore
-                    .collection(mContext.getString(R.string.child_category))
-                    .document(mCategoria.getCategoryName()).addSnapshotListener((documentSnapshot, e) -> {
-                        assert documentSnapshot != null;
-                        if (!documentSnapshot.exists()){
-                            firebaseFirestore
-                                    .collection(mContext.getString(R.string.child_category))
-                                    .document(mCategoria.getCategoryName())
-                                    .set(newContact)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            if (listener != null) {
-                                                listener.onCompleteInsert(null);
-                                            }
-                                        }
-                                    });
-                        }
-                    });
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
-
 
     public interface OnSuccessInsertListener {void onCompleteInsert(UploadTask.TaskSnapshot taskSnapshot);}
 

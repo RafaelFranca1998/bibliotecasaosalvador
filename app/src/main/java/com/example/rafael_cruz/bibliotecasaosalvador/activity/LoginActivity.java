@@ -36,6 +36,7 @@ import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.ToHashMap;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -66,39 +67,40 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private FirebaseAuth auntenticacao;
     private String identificadorUsuarioLogado;
+    private Usuario usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //   this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        // Set up the login form.
-        mEmailView = findViewById(R.id.email);
-        populateAutoComplete();
+            // Set up the login form.
+            mEmailView = findViewById(R.id.email);
+            populateAutoComplete();
 
-        mPasswordView = findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
-            if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                attemptLogin();
-                return true;
-            }
-            return false;
-        });
+            mPasswordView = findViewById(R.id.password);
+            mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
+                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                    attemptLogin();
+                    return true;
+                }
+                return false;
+            });
 
-        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(view -> attemptLogin());
+            Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+            mEmailSignInButton.setOnClickListener(view -> attemptLogin());
 
-        TextView mRegisterTxt =  findViewById(R.id.txt_registrar);
+            TextView mRegisterTxt =  findViewById(R.id.txt_registrar);
 
-        mRegisterTxt.setOnClickListener(v -> {
-            Intent intent =  new Intent(LoginActivity.this,RegistroActivity.class);
-            startActivity(intent);
-            finish();
-        });
+            mRegisterTxt.setOnClickListener(v -> {
+                Intent intent =  new Intent(LoginActivity.this,RegistroActivity.class);
+                startActivity(intent);
+                finish();
+            });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+            mLoginFormView = findViewById(R.id.login_form);
+            mProgressView = findViewById(R.id.login_progress);
+
     }
 
     private void populateAutoComplete() {
@@ -347,6 +349,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if (task.isSuccessful()) {
                         Toast.makeText(LoginActivity.this, "Sucesso ao fazer login!", Toast.LENGTH_SHORT).show();
                         abrirTelaPrincipal();
+                        finish();
                     } else {
                         Toast.makeText(LoginActivity.this, "Erro ao fazer login!", Toast.LENGTH_SHORT).show();
                         showProgress(false);
@@ -363,9 +366,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                finish();
-            } else {
+            if (!success) {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }

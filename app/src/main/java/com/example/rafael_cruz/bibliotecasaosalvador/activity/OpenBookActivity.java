@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
-import com.example.rafael_cruz.bibliotecasaosalvador.config.Base64Custom;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.MyCustomUtil;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.actions.Insert;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
@@ -85,7 +85,7 @@ public class OpenBookActivity extends AppCompatActivity {
     private File bookFile;
 
     private  void downloadFile(String url, final String nomeLivro) {
-        String mNome = Base64Custom.removeSpaces(nomeLivro);
+        String mNome = MyCustomUtil.removeSpaces(nomeLivro);
         StorageReference islandRef =
                 FirebaseStorage.getInstance().getReferenceFromUrl(url+"/livro.pdf");
 
@@ -111,7 +111,7 @@ public class OpenBookActivity extends AppCompatActivity {
                 Log.e("firebase ", ";local tem file created  created " + bookFile.getAbsolutePath());
                 Insert insert =  new Insert(this);
                 Preferencias preferencias =  new Preferencias(this);
-                insert.saveOffline(preferencias.getId(),livro);
+                insert.bookUserOffline(preferencias.getId(),livro);
                 abrirLivro(bookFile.getAbsolutePath());
             }).addOnFailureListener(exception -> {
                 exception.getCause();

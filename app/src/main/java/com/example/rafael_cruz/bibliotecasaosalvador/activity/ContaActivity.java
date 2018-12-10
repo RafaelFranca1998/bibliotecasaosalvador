@@ -125,7 +125,6 @@ public class ContaActivity extends AppCompatActivity {
 
         btChangeImg.setOnClickListener(v -> shareImg());
 
-
         Button btSair =  findViewById(R.id.bt_logout);
         btSair.setOnClickListener(v -> {
             user.signOut();

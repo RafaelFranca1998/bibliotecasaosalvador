@@ -7,6 +7,8 @@ public class Usuario {
     private String email;
     private String senha;
     private String curso;
+    private String idade;
+    private String semestre;
     private String linkImgAccount;
 
     public String getIdUsuario() {
@@ -55,5 +57,29 @@ public class Usuario {
 
     public void setLinkImgAccount(String linkImgAccount) {
         this.linkImgAccount = linkImgAccount;
+    }
+
+    public String getCurso() {
+        return curso;
+    }
+
+    public void setCurso(String curso) {
+        this.curso = curso;
+    }
+
+    public String getIdade() {
+        return idade;
+    }
+
+    public void setIdade(String idade) {
+        this.idade = idade;
+    }
+
+    public String getSemestre() {
+        return semestre;
+    }
+
+    public void setSemestre(String semestre) {
+        this.semestre = semestre;
     }
 }

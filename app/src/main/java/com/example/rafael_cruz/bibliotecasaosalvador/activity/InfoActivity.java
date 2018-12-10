@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,16 +20,14 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
-import com.example.rafael_cruz.bibliotecasaosalvador.config.Base64Custom;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.MyCustomUtil;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.actions.Delete;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.actions.Insert;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -40,8 +38,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Objects;
-
-import javax.annotation.Nullable;
 
 public class InfoActivity extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
@@ -72,6 +68,7 @@ public class InfoActivity extends AppCompatActivity {
     private ProgressDialog progressDialogHorizontal;
     private double progress;
     private Calendar myCalendar;
+    private Toolbar toolbar;
 
 
     @Override
@@ -96,6 +93,17 @@ public class InfoActivity extends AppCompatActivity {
         txtAno = findViewById(R.id.tv_ano);
         txtCurso = findViewById(R.id.tv_curso);
         txtSituacao = findViewById(R.id.tv_situation);
+
+        toolbar =  findViewById(R.id.toolbar_2);
+
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         Bundle extra = getIntent().getExtras();
         if (extra!= null){
@@ -178,9 +186,8 @@ public class InfoActivity extends AppCompatActivity {
                         livro.setDataVisitado(updateLabelData());
                         Insert insert =  new Insert(this);
                         insert.saveLastSee(idUsuario,livro);
-                        String nomeLivro = Base64Custom.removeSpaces(livro.getNome());
-                        nomeLivro = Base64Custom.unaccent(nomeLivro);
                         bookFile = new File(getFilesDir(),idLivro);
+                        toolbar.setTitle(MyCustomUtil.removeLines(livroNome));
                         checkLocalFile();
                         dimissDialog();
                         getImg();
@@ -227,8 +234,8 @@ public class InfoActivity extends AppCompatActivity {
     }
 
     private  void downloadFile(String url, final String nomeLivro) {
-        String mNome = Base64Custom.removeSpaces(nomeLivro);
-        mNome = Base64Custom.unaccent(mNome);
+        String mNome = MyCustomUtil.removeSpaces(nomeLivro);
+        mNome = MyCustomUtil.unaccent(mNome);
         StorageReference islandRef = FirebaseStorage.getInstance().getReferenceFromUrl(url + "/livro.pdf");
         bookFile = new File(getFilesDir(), mNome);
         progressDialogHorizontal = new ProgressDialog(InfoActivity.this);
@@ -245,7 +252,7 @@ public class InfoActivity extends AppCompatActivity {
         }).addOnSuccessListener(taskSnapshot -> {
             Log.e("firebase ", ";local tem file created  created " + bookFile.getAbsolutePath());
             Insert insert =  new Insert(this);
-            insert.saveOffline(idUsuario,livro);
+            insert.bookUserOffline(idUsuario,livro);
             txtSituacao.setTextColor(getResources().getColor(R.color.green));
             txtSituacao.setText(R.string.livro_baixado);
             buttonBaixar.setEnabled(false);

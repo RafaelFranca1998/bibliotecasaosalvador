@@ -10,12 +10,8 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
-import com.example.rafael_cruz.bibliotecasaosalvador.config.Base64Custom;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.MyCustomUtil;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -35,7 +31,7 @@ public class Delete {
     public void deleteBook(Livro livro){
         mLivro = livro;
         StorageReference deleteRef = FirebaseStorage.getInstance()
-                .getReferenceFromUrl(mLivro.getLinkDownload()+"/"+Base64Custom.removeSpaces(mLivro.getNome()));
+                .getReferenceFromUrl(mLivro.getLinkDownload()+"/"+MyCustomUtil.removeSpaces(mLivro.getNome()));
         deleteRef.delete().addOnSuccessListener(aVoid -> {
             deleteThumbnail(mLivro);
             Toast.makeText(mContext,R.string.delete_successful,Toast.LENGTH_LONG).show();

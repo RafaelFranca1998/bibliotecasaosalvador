@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
 import com.example.rafael_cruz.bibliotecasaosalvador.activity.TrocarSenhaActivity;
-import com.example.rafael_cruz.bibliotecasaosalvador.config.Base64Custom;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.MyCustomUtil;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -96,8 +96,8 @@ public class TabConfiguracoesFragment extends Fragment {
     }
 
     private boolean deleteLocalFile(String nomeLivro){
-        String mNome = Base64Custom.removeSpaces(nomeLivro);
-        mNome = Base64Custom.unaccent(mNome);
+        String mNome = MyCustomUtil.removeSpaces(nomeLivro);
+        mNome = MyCustomUtil.unaccent(mNome);
         File bookFile = new File(getContext().getFilesDir(), mNome);
         return bookFile.delete();
     }

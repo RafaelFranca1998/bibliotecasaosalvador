@@ -61,7 +61,7 @@ public class Preferencias {
     public HashMap<String,String> getDadosUsuario(){
         HashMap<String,String> dadosUsuario =  new HashMap<>();
         dadosUsuario.put        (CHAVE_NOME,preferences.getString(CHAVE_NOME,null));
-        dadosUsuario.put(CHAVE_EMAIL,preferences.getString(CHAVE_EMAIL,null));
+        dadosUsuario.put        (CHAVE_EMAIL,preferences.getString(CHAVE_EMAIL,null));
         dadosUsuario.put      (CHAVE_SENHA,preferences.getString(CHAVE_SENHA,null));
         return dadosUsuario;
     }

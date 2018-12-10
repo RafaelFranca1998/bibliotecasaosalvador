@@ -2,23 +2,17 @@ package com.example.rafael_cruz.bibliotecasaosalvador.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+
 
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.ToHashMap;
@@ -63,7 +57,6 @@ public class PesquisarActivity extends AppCompatActivity {
                 new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         recyclerViewPesquisar.setLayoutManager(gridLayoutManager);
         //------------------------------------------------------------------------------------------
-
     }
 
     @Override
@@ -88,6 +81,7 @@ public class PesquisarActivity extends AppCompatActivity {
             assert searchManager != null;
             searchView.setSearchableInfo(searchManager.getSearchableInfo(PesquisarActivity.this.getComponentName()));
         }
+
         Objects.requireNonNull(searchView).setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {

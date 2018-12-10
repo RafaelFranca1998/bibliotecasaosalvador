@@ -74,19 +74,29 @@ public class ToHashMap {
     public static HashMap<String,String> userToHashMap(Usuario object){
         HashMap<String,String> map =  new HashMap<>();
         map.put("nome", object.getNome());
-        map.put("sobrenome", object.getSobreNome());
+        map.put("sobreNome", object.getSobreNome());
         map.put("email", object.getEmail());
         map.put("idUsuario", object.getIdUsuario());
         map.put("imgDownload", object.getLinkImgAccount());
+        map.put("curso", object.getCurso());
+        map.put("idade", object.getIdade());
+        map.put("semestre", object.getSemestre());
         return map;
     }
     public static Usuario hashMapToUser(Map<String,Object> m){
-        Usuario usuario =  new Usuario();
-        usuario.setNome(m.get("nome").toString());
-        usuario.setSobreNome( m.get("sobrenome").toString());
-        usuario.setEmail( m.get("email").toString());
-        usuario.setIdUsuario( m.get("idUsuario").toString());
-        usuario.setLinkImgAccount( m.get("imgDownload").toString());
+        Usuario usuario = new Usuario();
+        try {
+            usuario.setNome(m.get("nome").toString());
+            usuario.setSobreNome(m.get("sobreNome").toString());
+            usuario.setEmail(m.get("email").toString());
+            usuario.setIdUsuario(m.get("idUsuario").toString());
+            usuario.setCurso(m.get("curso").toString());
+            usuario.setIdade(m.get("idade").toString());
+            usuario.setSemestre(m.get("semestre").toString());
+            usuario.setLinkImgAccount(m.get("imgDownload").toString());
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
         return usuario;
     }
 }

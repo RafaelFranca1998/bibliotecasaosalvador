@@ -30,10 +30,17 @@ public class TransitionActivity extends AppCompatActivity {
                 .setPersistenceEnabled(true)
                 .build();
         db.setFirestoreSettings(settings);
-        try{
-            getUser();
-        }catch (Exception e){
-
+        Preferencias preferencias =  new Preferencias(TransitionActivity.this);
+        boolean entrarAutomaticamente = preferencias.getEntrarAutmaticamente();
+        if (entrarAutomaticamente){
+            try {
+                getUser();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else {
+            Intent intent =  new Intent(TransitionActivity.this,LoginActivity.class);
+            startActivity(intent);
         }
     }
 

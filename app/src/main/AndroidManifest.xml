@@ -23,11 +23,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SettingsActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_settings"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.radaee.reader.PDFViewAct"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -35,13 +37,16 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.RecuperarSenhaActivity"
-            android:parentActivityName=".activity.LoginActivity" />
+            android:parentActivityName=".activity.LoginActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.FavoritosActivity"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.PesquisarActivity"
-            android:parentActivityName=".activity.MainActivity">
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -55,27 +60,45 @@
         </activity>
         <activity
             android:name=".activity.RegistroActivity"
-            android:parentActivityName=".activity.LoginActivity" />
+            android:parentActivityName=".activity.LoginActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.ContaActivity"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.InfoActivity"
-            android:parentActivityName=".activity.MainActivity" />
+            android:parentActivityName=".activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.OpenBookActivity"
-            android:parentActivityName=".activity.InfoActivity" />
-        <activity android:name=".activity.SplashScreen">
-            <intent-filter>
+            android:parentActivityName=".activity.InfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SplashScreen"
+            android:screenOrientation="portrait">
+            <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.TransitionActivity" />
-        <activity android:name=".activity.DisponivelOfflineActivity" />
-        <activity android:name=".activity.TrocarSenhaActivity" />
-        <activity android:name=".activity.CategoriasActivity"></activity>
+        <activity
+            android:name=".activity.TransitionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.DisponivelOfflineActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.TrocarSenhaActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.CategoriasActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.EditUserInfoActivity"
+            android:label="@string/title_activity_edit_user_info"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical"
-    tools:context=".fragment.EditUserInfoFragment">
+    tools:context=".activity.EditUserInfoActivity">
 
     <TextView
         android:id="@+id/textView16"
@@ -28,14 +28,14 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/nome" />
+                android:text="@string/nome"
+                android:textColor="@color/Preto" />
 
             <EditText
-                android:id="@+id/edit_text_nome"
+                android:id="@+id/edit_text_Info_nome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="true"
@@ -46,14 +46,14 @@
                 android:padding="6dp" />
 
             <TextView
-                android:id="@+id/textView9"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/sobrenome" />
+                android:text="@string/sobrenome"
+                android:textColor="@color/Preto" />
 
             <EditText
-                android:id="@+id/edit_text_sobrenome"
+                android:id="@+id/edit_text_Info_sobrenome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="true"
@@ -64,45 +64,81 @@
                 android:padding="6dp" />
 
             <TextView
-                android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/email" />
+                android:text="@string/email"
+                android:textColor="@color/Preto" />
 
             <EditText
-                android:id="@+id/edit_text_email"
+                android:id="@+id/edit_text_Info_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="true"
                 android:background="@drawable/round_corner_textview"
                 android:ems="10"
                 android:hint="@string/email"
-                android:inputType="textEmailAddress|textEmailSubject"
+                android:inputType="textEmailAddress"
                 android:padding="6dp" />
 
             <TextView
-                android:id="@+id/textView7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="@string/senha" />
+                android:text="Curso"
+                android:textColor="@color/Preto" />
 
             <EditText
-                android:id="@+id/edit_text_senha"
+                android:id="@+id/edit_text_Info_curso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="true"
                 android:background="@drawable/round_corner_textview"
                 android:ems="10"
-                android:hint="@string/senha"
-                android:inputType="textPersonName|textWebPassword|numberDecimal|numberPassword"
+                android:hint="Curso"
+                android:inputType="text|textCapWords"
+                android:padding="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Semestre"
+                android:textColor="@color/Preto" />
+
+            <EditText
+                android:id="@+id/edit_text_Info_semestre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="true"
+                android:background="@drawable/round_corner_textview"
+                android:ems="10"
+                android:hint="Semestre"
+                android:inputType="number"
+                android:padding="6dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="Idade"
+                android:textColor="@color/Preto" />
+
+            <EditText
+                android:id="@+id/edit_text_Info_idade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="true"
+                android:background="@drawable/round_corner_textview"
+                android:ems="10"
+                android:hint="Idade"
+                android:inputType="number"
                 android:padding="6dp" />
 
         </LinearLayout>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/bt_edit_info_concluir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Concluir" />
