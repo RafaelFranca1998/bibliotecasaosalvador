@@ -18,6 +18,7 @@ import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.Adapter
 import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.RecyclerItemClickListener;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -80,18 +81,17 @@ public class CategoriasActivity extends AppCompatActivity {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore
                 .collection(getString(R.string.child_book))
-                .whereArrayContains("categoria",categoria_key)
+                .whereEqualTo("categoria",categoria_key)
                 .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        listLivros.clear();
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            livro = document.toObject(Livro.class);
-                            listLivros.add(livro) ;
-                        }
-                        adapterListView.notifyDataSetChanged();
-                    } else {
-                        Log.w("D", "Error getting documents.", task.getException());
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            listLivros.clear();
+                            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                livro = document.toObject(Livro.class);
+                                listLivros.add(livro) ;
+                            }
+                            adapterListView.notifyDataSetChanged();
                     }
                 });
     }

@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     private AdapterRecyclerView adapterListViewRecentes;
 
     private LinearLayout ll_recentes;
+    private View llLoading;
     private ScrollView scrollViewMain = null;
     private NavigationView navigationView = null;
     private Toolbar toolbar = null;
@@ -91,12 +92,14 @@ public class MainActivity extends AppCompatActivity
         Preferencias preferencias =  new Preferencias(MainActivity.this);
         ID_USER = preferencias.getId();
         //-----------------------------------FIND VIEWS---------------------------------------------
-        scrollViewMain = findViewById(R.id.scroll_view_main);
-        ll_recentes = findViewById(R.id.ll_visto_ultimo);
         recyclerViewRecomendados = findViewById(R.id.recycler_view_livros);
         recyclerViewCategoria = findViewById(R.id.recycler_view_category);
         recyclerViewRecentes = findViewById(R.id.recycler_view_ultimos);
         toolbar = findViewById(R.id.toolbar_fav);
+
+        scrollViewMain = findViewById(R.id.scroll_view_main);
+        ll_recentes = findViewById(R.id.ll_visto_ultimo);
+        llLoading =  findViewById(R.id.loading_layout);
 
         setSupportActionBar(toolbar);
         //----------------------------------NAV-----------------------------------------------------
@@ -173,20 +176,37 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        updateRecomendados();
-        if (isConnected()){
-            if(ID_USER!= null) {
-                updateVistoUltimo();
-            }else {
+        updateAll();
+    }
+
+    private void updateAll(){
+        llLoading.setVisibility(View.VISIBLE);
+        scrollViewMain.setVisibility(View.GONE);
+        try {
+            updateRecomendados();
+            updateCategorias();
+            if (isConnected()) {
+                if (ID_USER != null) {
+                    updateVistoUltimo();
+                } else {
+                    ll_recentes.setVisibility(View.GONE);
+                    llLoading.setVisibility(View.GONE);
+                    scrollViewMain.setVisibility(View.VISIBLE);
+                }
+                ll_recentes.setVisibility(View.VISIBLE);
+                llLoading.setVisibility(View.GONE);
+                scrollViewMain.setVisibility(View.VISIBLE);
+            } else {
                 ll_recentes.setVisibility(View.GONE);
+                llLoading.setVisibility(View.GONE);
+                scrollViewMain.setVisibility(View.VISIBLE);
             }
-            ll_recentes.setVisibility(View.VISIBLE);
-        } else {
-            ll_recentes.setVisibility(View.GONE);
+            toolbar.setTitle("Principal");
+            navigationView.setCheckedItem(R.id.nav_inicio);
+        }catch (Exception e ){
+            llLoading.setVisibility(View.GONE);
+            scrollViewMain.setVisibility(View.VISIBLE);
         }
-        updateCategorias();
-        toolbar.setTitle("Principal");
-        navigationView.setCheckedItem(R.id.nav_inicio);
     }
 
     @Override

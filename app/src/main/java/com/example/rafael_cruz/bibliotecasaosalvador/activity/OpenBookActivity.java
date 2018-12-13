@@ -110,7 +110,7 @@ public class OpenBookActivity extends AppCompatActivity {
             }).addOnSuccessListener(taskSnapshot -> {
                 Log.e("firebase ", ";local tem file created  created " + bookFile.getAbsolutePath());
                 Insert insert =  new Insert(this);
-                Preferencias preferencias =  new Preferencias(this);
+                Preferencias preferencias =  new Preferencias(OpenBookActivity.this);
                 insert.bookUserOffline(preferencias.getId(),livro);
                 abrirLivro(bookFile.getAbsolutePath());
             }).addOnFailureListener(exception -> {

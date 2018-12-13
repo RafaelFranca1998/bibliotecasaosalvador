@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -35,11 +36,22 @@ import com.example.rafael_cruz.bibliotecasaosalvador.config.DAO;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.ToHashMap;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Usuario;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.signin.internal.SignInClientImpl;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,6 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private UserLoginTask mAuthTask = null;
 
     // UI references.
+    private CallbackManager mCallbackManager;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -72,12 +85,59 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
         setContentView(R.layout.activity_login);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        /**
+         * login facebook
+          *  AccessToken accessToken = AccessToken.getCurrentAccessToken();
+           * boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+         **/
 
             // Set up the login form.
             mEmailView = findViewById(R.id.email);
             populateAutoComplete();
 
+
+        LoginButton loginButton = findViewById(R.id.login_button_facebook);
+        loginButton.setReadPermissions("email");
+
+        //----------------------------------------Google--------------------------------------------
+        mCallbackManager = CallbackManager.Factory.create();
+
+        LoginButton mLoginButtonGoogle = findViewById(R.id.sign_in_button);
+
+        // Set the initial permissions to request from the user while logging in
+        mLoginButtonGoogle.setReadPermissions(Arrays.asList(EMAIL, USER_POSTS));
+        mLoginButtonGoogle.setAuthType(AUTH_TYPE);
+
+        // Callback registration
+        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                String id = loginResult.getAccessToken().getUserId();
+                setResult(RESULT_OK);
+                abrirTelaPrincipal();
+            }
+
+            @Override
+            public void onCancel() {
+                setResult(RESULT_CANCELED);
+                finish();
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+            }
+        });
+        //------------------------------------------------------------------------------------------
             mPasswordView = findViewById(R.id.password);
             mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
@@ -103,6 +163,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -110,6 +176,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         getLoaderManager().initLoader(0, null, this);
     }
+
 
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -387,6 +454,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Intent intent =  new Intent(LoginActivity.this,MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+
+    private static final String EMAIL = "email";
+    private static final String USER_POSTS = "user_posts";
+    private static final String AUTH_TYPE = "rerequest";
+
+    private void iniciarBotaoGoogle(){
+
     }
 }
 

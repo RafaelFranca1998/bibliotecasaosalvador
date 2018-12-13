@@ -10,6 +10,23 @@
     tools:context="com.example.rafael_cruz.bibliotecasaosalvador.activity.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <LinearLayout
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scrollbarStyle="insideInset" />
+    </LinearLayout>
+
     <ScrollView
         android:id="@+id/scroll_view_main"
         android:layout_width="match_parent"
