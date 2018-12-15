@@ -46,6 +46,7 @@ public class PesquisarActivity extends AppCompatActivity {
     AdapterRecyclerViewPesquisar adapter;
     FirebaseFirestore rootRef = FirebaseFirestore.getInstance();
     Query nameOfTheWritterQuery;
+    private View llPesquisaVazia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,8 @@ public class PesquisarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pesquisar);
 
         result =  new ArrayList<>();
+
+        llPesquisaVazia =  findViewById(R.id.ll_pesquisa_vazia);
 
         recyclerViewPesquisar =  findViewById(R.id.recycler_pesquisar);
 
@@ -143,6 +146,11 @@ public class PesquisarActivity extends AppCompatActivity {
                 QuerySnapshot queryDocumentSnapshots = task.getResult();
                 for (DocumentSnapshot snapshot : queryDocumentSnapshots){
                     result.add( ToHashMap.hashMapToLivro(snapshot.getData()));
+                }
+                if (result.size()<=0){
+                    llPesquisaVazia.setVisibility(View.VISIBLE);
+                }else {
+                    llPesquisaVazia.setVisibility(View.GONE);
                 }
                 adapter.notifyDataSetChanged();
             }

@@ -26,6 +26,7 @@ import com.example.rafael_cruz.bibliotecasaosalvador.config.ToHashMap;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.AdapterRecyclerView;
 import com.example.rafael_cruz.bibliotecasaosalvador.R;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.AdapterRecyclerViewCategory;
+import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.AdapterRecyclerViewPesquisar;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.recyclerview.RecyclerItemClickListener;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Categoria;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Livro;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity
 
     private AdapterRecyclerView adapterListView;
     private AdapterRecyclerViewCategory adapterListViewCategoria;
-    private AdapterRecyclerView adapterListViewRecentes;
+    private AdapterRecyclerViewPesquisar adapterListViewRecentes;
 
     private LinearLayout ll_recentes;
     private View llLoading;
@@ -119,14 +120,14 @@ public class MainActivity extends AppCompatActivity
         adapterListViewCategoria =
                 new AdapterRecyclerViewCategory(MainActivity.this,listCategoria);
         adapterListViewRecentes =
-                new AdapterRecyclerView(MainActivity.this,listLivrosRecentes);
+                new AdapterRecyclerViewPesquisar(MainActivity.this,listLivrosRecentes);
         //------------------------------------------------------------------------------------------
         recyclerViewCategoria.setAdapter(adapterListViewCategoria);
         recyclerViewRecomendados.setAdapter(adapterListView);
         recyclerViewRecentes.setAdapter(adapterListViewRecentes);
         //------------------------------------------------------------------------------------------
         StaggeredGridLayoutManager gridLayoutManagerRecentes =
-                new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+                new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         StaggeredGridLayoutManager gridLayoutManager =
                 new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
         StaggeredGridLayoutManager gridLayoutManagerCategoria =
