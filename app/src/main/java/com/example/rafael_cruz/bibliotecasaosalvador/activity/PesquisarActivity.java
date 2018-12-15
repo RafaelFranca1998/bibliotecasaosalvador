@@ -87,6 +87,7 @@ public class PesquisarActivity extends AppCompatActivity {
         SearchView searchView = null;
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
+
         }
         if (searchView != null) {
             assert searchManager != null;
@@ -129,6 +130,8 @@ public class PesquisarActivity extends AppCompatActivity {
         firebaseFirestore.collection("livros")
                 .whereGreaterThanOrEqualTo("nome",query)
                 .whereGreaterThanOrEqualTo("nome",capitalize(output))
+                .whereGreaterThanOrEqualTo("nome",query.toUpperCase())
+                .whereGreaterThanOrEqualTo("nome",query.toLowerCase())
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     for (DocumentSnapshot snapshot : queryDocumentSnapshots){

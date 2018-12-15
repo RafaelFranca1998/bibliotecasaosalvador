@@ -41,14 +41,17 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.signin.internal.SignInClientImpl;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,7 +76,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private CallbackManager mCallbackManager;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -82,11 +84,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String identificadorUsuarioLogado;
     private Usuario usuario;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+
         setContentView(R.layout.activity_login);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -104,40 +107,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             populateAutoComplete();
 
 
-        LoginButton loginButton = findViewById(R.id.login_button_facebook);
-        loginButton.setReadPermissions("email");
-
-        //----------------------------------------Google--------------------------------------------
-        mCallbackManager = CallbackManager.Factory.create();
-
-        LoginButton mLoginButtonGoogle = findViewById(R.id.sign_in_button);
-
-        // Set the initial permissions to request from the user while logging in
-        mLoginButtonGoogle.setReadPermissions(Arrays.asList(EMAIL, USER_POSTS));
-        mLoginButtonGoogle.setAuthType(AUTH_TYPE);
-
-        // Callback registration
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                String id = loginResult.getAccessToken().getUserId();
-                setResult(RESULT_OK);
-                abrirTelaPrincipal();
-            }
-
-            @Override
-            public void onCancel() {
-                setResult(RESULT_CANCELED);
-                finish();
-                // App code
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-            }
-        });
-        //------------------------------------------------------------------------------------------
             mPasswordView = findViewById(R.id.password);
             mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
@@ -166,7 +135,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     private void populateAutoComplete() {

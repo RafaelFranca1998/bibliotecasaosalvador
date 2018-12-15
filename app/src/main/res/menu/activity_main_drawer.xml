@@ -27,7 +27,7 @@
             android:title="@string/conta" />
         <item
             android:id="@+id/nav_sobre"
-            android:icon="@drawable/informacao_icon_black"
+            android:icon="@drawable/ic_round_error_outline_24px"
             android:title="@string/sobre" />
     </group>
 

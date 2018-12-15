@@ -38,6 +38,7 @@
                     android:id="@+id/image_view_list_category"
                     android:layout_width="130dp"
                     android:layout_height="160dp"
+                    android:background="@android:drawable/screen_background_light_transparent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </FrameLayout>

@@ -46,7 +46,7 @@ public class DisponivelOfflineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disponivel_offline);
         //------------------------------------------------------------------------------------------
-        Preferencias preferencias =  new Preferencias(this);
+        Preferencias preferencias =  new Preferencias(DisponivelOfflineActivity.this);
         ID_USER = preferencias.getId();
         KEY = getString(R.string.tag_id);
         //------------------------------------------------------------------------------------------

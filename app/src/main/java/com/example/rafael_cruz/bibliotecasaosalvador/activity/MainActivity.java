@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity
 
     private LinearLayout ll_recentes;
     private View llLoading;
+    private View llScrollView;
     private ScrollView scrollViewMain = null;
     private NavigationView navigationView = null;
     private Toolbar toolbar = null;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity
         scrollViewMain = findViewById(R.id.scroll_view_main);
         ll_recentes = findViewById(R.id.ll_visto_ultimo);
         llLoading =  findViewById(R.id.loading_layout);
+        llScrollView =  findViewById(R.id.ll_scrollview_main);
 
         setSupportActionBar(toolbar);
         //----------------------------------NAV-----------------------------------------------------
@@ -171,6 +173,7 @@ public class MainActivity extends AppCompatActivity
                 })
         );
         //------------------------------------------------------------------------------------------
+        updateAll();
     }
 
     @Override
@@ -181,7 +184,7 @@ public class MainActivity extends AppCompatActivity
 
     private void updateAll(){
         llLoading.setVisibility(View.VISIBLE);
-        scrollViewMain.setVisibility(View.GONE);
+        llScrollView.setVisibility(View.GONE);
         try {
             updateRecomendados();
             updateCategorias();
@@ -191,21 +194,21 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     ll_recentes.setVisibility(View.GONE);
                     llLoading.setVisibility(View.GONE);
-                    scrollViewMain.setVisibility(View.VISIBLE);
+                    llScrollView.setVisibility(View.VISIBLE);
                 }
                 ll_recentes.setVisibility(View.VISIBLE);
                 llLoading.setVisibility(View.GONE);
-                scrollViewMain.setVisibility(View.VISIBLE);
+                llScrollView.setVisibility(View.VISIBLE);
             } else {
                 ll_recentes.setVisibility(View.GONE);
                 llLoading.setVisibility(View.GONE);
-                scrollViewMain.setVisibility(View.VISIBLE);
+                llScrollView.setVisibility(View.VISIBLE);
             }
             toolbar.setTitle("Principal");
             navigationView.setCheckedItem(R.id.nav_inicio);
         }catch (Exception e ){
             llLoading.setVisibility(View.GONE);
-            scrollViewMain.setVisibility(View.VISIBLE);
+            llScrollView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -394,13 +397,24 @@ public class MainActivity extends AppCompatActivity
                 Intent intent =  new Intent(MainActivity.this,PesquisarActivity.class);
                 startActivity(intent);}
         } else if (id == R.id.nav_favoritos) {
-            if (!item.isChecked()){
-                Intent intent =  new Intent(MainActivity.this,FavoritosActivity.class);
-                startActivity(intent);}
+            if (isConnected()){
+            if (!item.isChecked()) {
+                Intent intent = new Intent(MainActivity.this, FavoritosActivity.class);
+                startActivity(intent);
+            }else {
+                Intent intent =  new Intent(MainActivity.this,LoginActivity.class);
+                startActivity( intent );
+            }}
         } else if (id == R.id.nav_disponivel_offline) {
             if (!item.isChecked()){
-                Intent intent =  new Intent(MainActivity.this,DisponivelOfflineActivity.class);
-                startActivity(intent);}
+                if (isConnected()){
+                    Intent intent =  new Intent(MainActivity.this,DisponivelOfflineActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent =  new Intent(MainActivity.this,LoginActivity.class);
+                    startActivity( intent );
+                }
+                }
         } else if (id == R.id.nav_conta) {
             if (isConnected()){
                 Intent intent =  new Intent(MainActivity.this,ContaActivity.class);

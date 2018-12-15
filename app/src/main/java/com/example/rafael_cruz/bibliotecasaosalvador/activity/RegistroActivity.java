@@ -6,9 +6,12 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.provider.Telephony;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,11 +22,24 @@ import com.example.rafael_cruz.bibliotecasaosalvador.config.DAO;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.Preferencias;
 import com.example.rafael_cruz.bibliotecasaosalvador.config.actions.Insert;
 import com.example.rafael_cruz.bibliotecasaosalvador.model.Usuario;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 public class RegistroActivity extends AppCompatActivity {
@@ -40,11 +56,16 @@ public class RegistroActivity extends AppCompatActivity {
 
     private Usuario user;
 
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
         setContentView(R.layout.activity_registro);
 
         //-----------------------------------CAMPOS DO FORM-----------------------------------------
@@ -62,6 +83,60 @@ public class RegistroActivity extends AppCompatActivity {
             user.setSobreNome(editTextLastName.getText().toString());
             user.setEmail(editTextEmail.getText().toString());
             attemptRegister();
+        });
+        //------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------
+        loginButton = findViewById(R.id.login_button_facebook);
+
+        callbackManager = CallbackManager.Factory.create();
+
+        // Set the initial permissions to request from the user while logging in
+        loginButton.setReadPermissions(Arrays.asList(
+                "public_profile", "email", "user_birthday", "user_friends"));
+        loginButton.setAuthType(Telephony.Carriers.AUTH_TYPE);
+
+        // Callback registration
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                Log.v("LoginActivity", response.toString());
+
+                                // Application code
+                                try {
+                                    String email = object.getString("email");
+                                    String name = object.getString("name");
+                                    String birthday = object.getString("birthday"); // 01/31/1980 format
+                                    Toast.makeText(RegistroActivity.this,email+name+birthday,Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender,birthday");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+                Log.v("LoginActivity", "cancel");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+                Log.v("LoginActivity", exception.getCause().toString());
+            }
         });
         //------------------------------------------------------------------------------------------
     }
@@ -101,6 +176,14 @@ public class RegistroActivity extends AppCompatActivity {
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+    }
+
     private void attemptRegister() {
         if (mAuthTask != null) {
             return;
