@@ -399,13 +399,12 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);}
         } else if (id == R.id.nav_favoritos) {
             if (isConnected()){
-            if (!item.isChecked()) {
                 Intent intent = new Intent(MainActivity.this, FavoritosActivity.class);
                 startActivity(intent);
             }else {
                 Intent intent =  new Intent(MainActivity.this,LoginActivity.class);
                 startActivity( intent );
-            }}
+            }
         } else if (id == R.id.nav_disponivel_offline) {
             if (!item.isChecked()){
                 if (isConnected()){
